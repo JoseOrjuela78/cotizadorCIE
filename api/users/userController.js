@@ -102,8 +102,6 @@ module.exports.postUser = (request, response) => {
 module.exports.login = (request, response) => {
     const req = new mssql.Request();
     const bd = request.body;
-    console.log(bd.username);
-
     const sql = `EXEC PR_LOGIN '${bd.username}', '@pass OUTPUT','@code OUTPUT', '@message OUTPUT';`;
 
     req.query(sql, (err, result) => {
@@ -160,12 +158,17 @@ module.exports.updateUser = (request, response) => {
     const req = new mssql.Request();
     const identificacion = request.params.id
     const bd = request.body;
-    const salt = bcrypt.genSaltSync(10);
-    bd.password = bcrypt.hashSync(bd.password, salt);
+
+    if (!bd.pass == '') {
+        const salt = bcrypt.genSaltSync(10);
+        bd.pass = bcrypt.hashSync(bd.pass, salt);
+    }
+
+
     bd.nombre = String(bd.nombre).toLocaleUpperCase();
     bd.apellido = String(bd.apellido).toLocaleUpperCase();
 
-    const sql = `PR_UPDATE_USUARIO '${identificacion}','${bd.nombre}','${bd.apellido}','${bd.password}',${bd.rol},${bd.estado},'@code OUTPUT', '@message OUTPUT';`;
+    const sql = `PR_UPDATE_USUARIO '${identificacion}','${bd.nombre}','${bd.apellido}','${bd.pass}',${bd.rol},${bd.estado},'@code OUTPUT', '@message OUTPUT';`;
 
     req.query(sql, (err, result) => {
 
@@ -177,10 +180,10 @@ module.exports.updateUser = (request, response) => {
         } else {
 
             const code = parseInt(result.recordsets[0][0].COD);
-            const message = result.recordsets[1][0].MSG;
+            const msg = result.recordsets[1][0].MSG;
 
             response.status(code).json({
-                message
+                msg
             });
         }
     });

@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const UserRouters = require('../users/userRouters');
 const QuoteRouters = require('../quotes/quotesRouters');
+const TablesRoutes = require('../tables/tablesRouters')
 const https = require('https');
 const mssql = require('mssql');
 
@@ -37,6 +38,7 @@ class Server {
     routes() {
         this.app.use(UserRouters);
         this.app.use(QuoteRouters);
+        this.app.use(TablesRoutes);
     }
 
     listen() {
