@@ -291,6 +291,34 @@ module.exports.closeQuoteRows = (request, response) => {
 
 }
 
+module.exports.getTotalDto = (request, response) => {
+    const req = new mssql.Request();
+    const idquote = parseInt(request.params.idquote);
+
+    const sql = `SELECT SUM(Cpreciototal) as 'TotalDto' FROM CotizacionesTotales WHERE id_cotizacion = ${idquote};`;
+
+    req.query(sql, (err, result) => {
+
+        if (err) {
+            return response.status(400).json({
+                ok: false,
+                err: err.originalError.info.message
+            });
+        };
+
+        const totalDto = result.recordset[0].TotalDto;
+        const message = 'GET TOTAL CON DESCUENTO';
+
+        response.status(200).json({
+            message,
+            totalDto
+
+        });
+
+    });
+
+};
+
 module.exports.Cpeso = (request, response) => {
 
     const req = new mssql.Request();
@@ -322,3 +350,68 @@ module.exports.Cpeso = (request, response) => {
     });
 
 }
+
+module.exports.getQuoteDetail = (request, response) => {
+    const req = new mssql.Request();
+    const idquote = parseInt(request.params.idquote);
+
+    const sql = `EXEC PR_GET_QUOTE ${idquote},'@code OUTPUT', '@message OUTPUT'`;
+
+    req.query(sql, (err, result) => {
+
+        if (err) {
+            return response.status(400).json({
+                ok: false,
+                err: err.originalError.info.message
+            });
+        };
+
+        const quoteDta = JSON.stringify(result.recordset[0]);
+        const quoteDetail = JSON.stringify(result.recordsets[1]);
+        const quoteTotalZona = JSON.stringify(result.recordsets[2]);
+        const quoteTotal = JSON.stringify(result.recordsets[3]);
+        const quoteTotalDto = JSON.stringify(result.recordsets[4]);
+        const code = parseInt(result.recordsets[5][0].COD);
+        const message = result.recordsets[6][0].MSG;
+
+        response.status(code).json({
+            message,
+            quoteDta,
+            quoteDetail,
+            quoteTotalZona,
+            quoteTotal,
+            quoteTotalDto
+        });
+
+    });
+
+};
+
+
+module.exports.getidQuotes = (request, response) => {
+
+    const req = new mssql.Request();
+    const table = request.params.table;
+    const sql = `select * from Cotizaciones;`;
+
+    req.query(sql, (err, result) => {
+
+        if (err) {
+            return response.status(400).json({
+                ok: false,
+                err: err.originalError.info.message
+            });
+        };
+
+        const message = `GET TABLA Cotizaciones`
+        const data = JSON.stringify(result.recordset);
+
+        response.status(200).json({
+            message,
+            data
+
+        });
+
+    });
+
+};

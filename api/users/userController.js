@@ -138,12 +138,15 @@ module.exports.login = (request, response) => {
                 usuario: result.recordsets[3][0]
             }, process.env.JWT_KEY, { expiresIn: '8h' })
 
+
             const msg = result.recordsets[2][0].MSG;
+            const user = JSON.stringify(result.recordsets[3][0]);
 
             response.status(code).json({
                 ok: true,
                 msg,
-                token
+                token,
+                user
             });
 
         };

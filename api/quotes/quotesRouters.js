@@ -14,6 +14,9 @@ router.get('/api/refs-get/:key', [verificaToken], quotesController.getRef);
 router.post('/api/quote-close', [verificaToken], quotesController.closerQuote);
 router.put('/api/quote-close-row', [verificaToken], quotesController.closeQuoteRows);
 router.put('/api/quote-cpeso', [verificaToken], quotesController.Cpeso);
+router.get('/api/quote-totaldto/:idquote', [verificaToken], quotesController.getTotalDto);
+router.get('/api/quote-detail/:idquote', [verificaToken], quotesController.getQuoteDetail);
+router.get('/api/quotes', [verificaToken], quotesController.getidQuotes);
 
 
 module.exports = router;
