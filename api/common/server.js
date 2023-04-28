@@ -15,16 +15,18 @@ class Server {
         this.middlewares();
         //Routes
         this.routes();
+
         this.config = {
-            user: 'sa',
-            password: '123456',
-            server: '192.168.20.46',
+            user: 'sqlserver', //'sa',
+            password: "'I[tD|e;'gP91VfM", //'123456',
+            server: '34.72.67.247', //'192.168.20.46',
             port: 1433,
-            database: 'CotizadorV3',
+            database: 'cotizador', //'CotizadorV3',
             options: {
                 enableArithAbort: true,
                 encrypt: false
             }
+
         };
     }
 
