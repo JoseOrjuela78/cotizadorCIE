@@ -17,11 +17,11 @@ class Server {
         this.routes();
 
         this.config = {
-            user: 'sqlserver', //'sa',
-            password: "'I[tD|e;'gP91VfM", //'123456',
-            server: '34.72.67.247', //'192.168.20.46',
+            user: 'sa', //'sqlserver', 
+            password: '123456', //"'I[tD|e;'gP91VfM",
+            server: '192.168.20.46', //'34.72.67.247', 
             port: 1433,
-            database: 'cotizador', //'CotizadorV3',
+            database: 'CotizadorV3', //'cotizador', 
             options: {
                 enableArithAbort: true,
                 encrypt: false
