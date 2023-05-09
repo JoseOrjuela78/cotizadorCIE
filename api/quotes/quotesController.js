@@ -194,11 +194,9 @@ module.exports.getRef = (request, response) => {
     SELECT
     ld.id_detalle, 
     ld.part_number,
-    h.descripcion,
+    ld.herramienta,
     p.proveedor
     FROM Listadetalle ld
-    INNER JOIN Herramientas h
-    ON ld.id_herramienta = h.id_herramienta
     INNER JOIN Zona_Proveedor zp
     ON ld.id_zp = zp.id_zp
     INNER JOIN Proveedores p

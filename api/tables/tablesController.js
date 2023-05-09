@@ -42,7 +42,7 @@ module.exports.inserttablas = (request, response) => {
         response.status(201).json({
             message: 'carga superior a 10 mil rows'
         });
-    } else if (arr.length <= 0) {
+    } else if (arr.length < 0) {
 
         response.status(500).json({
             message: 'carga sin datos'
@@ -92,28 +92,29 @@ module.exports.inserttablas = (request, response) => {
                 return;
             } else if (table == "Listadetalle") {
 
-                arr.forEach(element => {
 
-                    const sql = `EXEC PR_INSERT_LISTADETALLE ${element.id_zp},${element.id_herramienta},'${element.part_number}',${element.costo},${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
+                const sql = `EXEC PR_INSERT_LISTADETALLE '@code OUTPUT', '@message OUTPUT';`;
 
-                    req.query(sql, (err, result) => {
+                req.query(sql, (err, result) => {
 
-                        if (err) {
-                            return response.status(400).json({
-                                ok: false,
-                                err: err.originalError.info.message
-                            });
-                        };
+                    if (err) {
+                        return response.status(400).json({
+                            ok: false,
+                            err: err.originalError.info.message
+                        });
+                    };
 
-
+                    response.status(200).json({
+                        message: `carga ${table} realizada`
                     });
+                    return;
+
 
                 });
 
-                response.status(200).json({
-                    message: `carga ${table} realizada`
-                });
-                return;
+
+
+
             } else if (table == "Monedas") {
                 arr.forEach(element => {
 
