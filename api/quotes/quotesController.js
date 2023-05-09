@@ -197,11 +197,9 @@ module.exports.getRef = (request, response) => {
     ld.herramienta,
     p.proveedor
     FROM Listadetalle ld
-    INNER JOIN Zona_Proveedor zp
-    ON ld.id_zp = zp.id_zp
     INNER JOIN Proveedores p
-    ON zp.id_proveedor = p.id_proveedor
-    WHERE part_number LIKE '${key}%';
+    ON p.id_proveedor = ld.proveedor
+    WHERE ld.part_number LIKE '${key}%';
     `;
 
     req.query(sql, (err, result) => {
