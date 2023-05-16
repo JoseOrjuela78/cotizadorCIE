@@ -230,7 +230,7 @@ module.exports.inserttablas = (request, response) => {
                 return;
             } else if (table == "Trm") {
                 arr.forEach(element => {
-                    const sql = `EXEC PR_CREAR_TRM '${element.id_moneda}',${element.valor},${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
+                    const sql = `EXEC PR_CREAR_TRM '${element.id_moneda}',${element.valor},${element.tasaUsd},${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
                     req.query(sql, (err, result) => {
 
                         if (err) {
@@ -652,7 +652,7 @@ module.exports.updateTrm = (request, response) => {
     const idTrm = request.params.id;
     const bd = request.body;
 
-    const sql = `EXEC PR_UPDATE_TRM ${idTrm},${bd.id_moneda},${bd.valor},${user.id_usuario},${bd.estado},'@code OUTPUT', '@message OUTPUT';`;
+    const sql = `EXEC PR_UPDATE_TRM ${idTrm},${bd.id_moneda},${bd.valor},${bd.tasaUsd},${user.id_usuario},${bd.estado},'@code OUTPUT', '@message OUTPUT';`;
 
     req.query(sql, (err, result) => {
 

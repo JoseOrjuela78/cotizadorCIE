@@ -97,7 +97,6 @@ module.exports.updateQuoteDetail = (request, response) => {
 
 }
 
-
 module.exports.deleteQuoteDetail = (request, response) => {
     const req = new mssql.Request();
     const id = request.params.id;
@@ -383,7 +382,6 @@ module.exports.getQuoteDetail = (request, response) => {
 
 };
 
-
 module.exports.getidQuotes = (request, response) => {
 
     const req = new mssql.Request();
@@ -406,6 +404,34 @@ module.exports.getidQuotes = (request, response) => {
             message,
             data
 
+        });
+
+    });
+
+};
+
+module.exports.getBrands = (request, response) => {
+    const req = new mssql.Request();
+    const key = request.params.key;
+
+    const sql = `SELECT * FROM Proveedores ORDER BY id_proveedor ASC;`;
+
+    req.query(sql, (err, result) => {
+
+        if (err) {
+            return response.status(400).json({
+                ok: false,
+                err: err.originalError.info.message
+            });
+        };
+
+
+        const message = 'GET LISTA MARCAS';
+
+
+        response.status(200).json({
+            message,
+            list: result.recordsets[0]
         });
 
     });
