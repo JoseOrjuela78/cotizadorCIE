@@ -37,10 +37,10 @@ module.exports.inserttablas = (request, response) => {
     const bd = request.body;
     const arr = JSON.parse(bd.data);
 
-    if (arr.length > 10000) {
+    if (arr.length > 1000) {
 
         response.status(201).json({
-            message: 'carga superior a 10 mil rows'
+            message: 'carga superior a 1 mil rows'
         });
     } else if (arr.length < 0) {
 
@@ -207,22 +207,22 @@ module.exports.inserttablas = (request, response) => {
                 });
                 return;
             } else if (table == "Tarifas") {
-                arr.forEach(element => {
-                    const sql = `EXEC PR_CREAR_TARIFAS ${element.id_zona},${element.peso_min},${element.peso_max},${element.tarifa},${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
-                    req.query(sql, (err, result) => {
 
-                        if (err) {
-                            return response.status(400).json({
-                                ok: false,
-                                err: err.originalError.info.message
-                            });
-                        };
+                const sql = `EXEC PR_CREAR_TARIFAS '@code OUTPUT', '@message OUTPUT';`;
+                req.query(sql, (err, result) => {
 
-
-                    });
+                    if (err) {
+                        return response.status(400).json({
+                            ok: false,
+                            err: err.originalError.info.message
+                        });
+                    };
 
 
                 });
+
+
+
 
                 response.status(200).json({
                     message: `carga ${table} realizada`
