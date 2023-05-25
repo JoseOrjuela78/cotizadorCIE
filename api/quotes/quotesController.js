@@ -344,13 +344,12 @@ module.exports.Cpeso = (request, response) => {
 
     });
 
-}
+};
 
-module.exports.getQuoteDetail = (request, response) => {
+module.exports.getSellers = (request, response) => {
     const req = new mssql.Request();
-    const idquote = parseInt(request.params.idquote);
 
-    const sql = `EXEC PR_GET_QUOTE ${idquote},'@code OUTPUT', '@message OUTPUT'`;
+    const sql = `select DISTINCT (vendedor), id_usuario from Cotizaciones  ORDER BY vendedor;`;
 
     req.query(sql, (err, result) => {
 
@@ -361,21 +360,42 @@ module.exports.getQuoteDetail = (request, response) => {
             });
         };
 
-        const quoteDta = JSON.stringify(result.recordset[0]);
-        const quoteDetail = JSON.stringify(result.recordsets[1]);
-        const quoteTotalZona = JSON.stringify(result.recordsets[2]);
-        const quoteTotal = JSON.stringify(result.recordsets[3]);
-        const quoteTotalDto = JSON.stringify(result.recordsets[4]);
-        const code = parseInt(result.recordsets[5][0].COD);
-        const message = result.recordsets[6][0].MSG;
 
-        response.status(code).json({
+        const message = 'GET LISTA VENDEDORES';
+
+
+        response.status(200).json({
             message,
-            quoteDta,
-            quoteDetail,
-            quoteTotalZona,
-            quoteTotal,
-            quoteTotalDto
+            list: result.recordsets[0]
+        });
+
+    });
+
+};
+
+module.exports.getCustomers = (request, response) => {
+    const req = new mssql.Request();
+    const idUsuario = request.params.id;
+
+
+    const sql = `select DISTINCT (CLIENTE) from Cotizaciones WHERE id_usuario = ${idUsuario} ORDER BY CLIENTE;`;
+
+    req.query(sql, (err, result) => {
+
+        if (err) {
+            return response.status(400).json({
+                ok: false,
+                err: err.originalError.info.message
+            });
+        };
+
+
+        const message = 'GET LISTA CLIENTES';
+
+
+        response.status(200).json({
+            message,
+            list: result.recordsets[0]
         });
 
     });
@@ -385,8 +405,10 @@ module.exports.getQuoteDetail = (request, response) => {
 module.exports.getidQuotes = (request, response) => {
 
     const req = new mssql.Request();
-    const table = request.params.table;
-    const sql = `select * from Cotizaciones;`;
+    const cliente = request.params.cl;
+    const idUsuario = parseInt(request.params.id);
+
+    const sql = `SELECT DISTINCT(c.id_cotizacion) as id_cotizacion FROM Cotizaciones c INNER JOIN Cotizacionesdetalle cd ON c.id_cotizacion = cd.id_cotizacion WHERE UPPER(c.cliente) = UPPER('${cliente}') AND c.id_usuario = ${idUsuario} ORDER BY c.id_cotizacion DESC;`;
 
     req.query(sql, (err, result) => {
 
@@ -405,6 +427,51 @@ module.exports.getidQuotes = (request, response) => {
             data
 
         });
+
+    });
+
+};
+
+module.exports.getQuoteDetail = (request, response) => {
+    const req = new mssql.Request();
+    const idquote = parseInt(request.params.idquote);
+
+    const sql = `EXEC PR_GET_QUOTE ${idquote},'@code OUTPUT', '@message OUTPUT'`;
+
+    req.query(sql, (err, result) => {
+
+        if (err) {
+            return response.status(400).json({
+                ok: false,
+                err: err.originalError.info.message
+            });
+        };
+
+        if (result.recordsets[0][0].COD == '404') {
+
+            response.status(200).json({
+                message: result.recordsets[1][0].MSG
+            });
+
+        } else {
+            const quoteDta = JSON.stringify(result.recordset[0]);
+            const quoteDetail = JSON.stringify(result.recordsets[1]);
+            const quoteTotalZona = JSON.stringify(result.recordsets[2]);
+            const quoteTotal = JSON.stringify(result.recordsets[3]);
+            const quoteTotalDto = JSON.stringify(result.recordsets[4]);
+            const code = parseInt(result.recordsets[5][0].COD);
+            const message = result.recordsets[6][0].MSG;
+
+            response.status(code).json({
+                message,
+                quoteDta,
+                quoteDetail,
+                quoteTotalZona,
+                quoteTotal,
+                quoteTotalDto
+            });
+
+        };
 
     });
 

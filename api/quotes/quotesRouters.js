@@ -16,8 +16,10 @@ router.put('/api/quote-close-row', [verificaToken], quotesController.closeQuoteR
 router.put('/api/quote-cpeso', [verificaToken], quotesController.Cpeso);
 router.get('/api/quote-totaldto/:idquote', [verificaToken], quotesController.getTotalDto);
 router.get('/api/quote-detail/:idquote', [verificaToken], quotesController.getQuoteDetail);
-router.get('/api/quotes', [verificaToken], quotesController.getidQuotes);
+router.get('/api/quotes/:cl/:id', [verificaToken], quotesController.getidQuotes);
 router.get('/api/brands', [verificaToken], quotesController.getBrands);
+router.get('/api/sellers', [verificaToken], quotesController.getSellers);
+router.get('/api/customers/:id', [verificaToken], quotesController.getCustomers);
 
 
 module.exports = router;
