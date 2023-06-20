@@ -319,7 +319,8 @@ module.exports.Cpeso = (request, response) => {
     const req = new mssql.Request();
     const bd = request.body;
 
-    const sql = `EXEC PR_CPESO ${bd.cantidad}, ${bd.peso_kg},${bd.largoCM},${bd.anchoCM},${bd.altoCM},'@code OUTPUT', '@message OUTPUT'`;
+
+    const sql = `EXEC PR_CPESO ${bd.id_detalle}, ${bd.cantidad}, ${bd.peso_kg},${bd.largoCM},${bd.anchoCM},${bd.altoCM},'@code OUTPUT', '@message OUTPUT'`;
 
     req.query(sql, (err, result) => {
 
