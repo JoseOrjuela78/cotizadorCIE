@@ -222,8 +222,6 @@ module.exports.inserttablas = (request, response) => {
                 });
 
 
-
-
                 response.status(200).json({
                     message: `carga ${table} realizada`
                 });
@@ -356,6 +354,28 @@ module.exports.inserttablas = (request, response) => {
 
 
                 });
+
+                response.status(200).json({
+                    message: `carga ${table} realizada`
+                });
+                return;
+            } else if (table == "DescuentosVolumen") {
+
+                const sql = `EXEC PR_INSERT_DTOVOLUMEN '@code OUTPUT', '@message OUTPUT';`;
+                req.query(sql, (err, result) => {
+
+                    if (err) {
+                        return response.status(400).json({
+                            ok: false,
+                            err: err.originalError.info.message
+                        });
+                    };
+
+
+                });
+
+
+
 
                 response.status(200).json({
                     message: `carga ${table} realizada`
