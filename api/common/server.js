@@ -5,6 +5,7 @@ const QuoteRouters = require('../quotes/quotesRouters');
 const TablesRoutes = require('../tables/tablesRouters')
 const https = require('https');
 const mssql = require('mssql');
+const logger = require('./logger');
 
 class Server {
 
@@ -60,10 +61,11 @@ class Server {
             const connetion = mssql.connect(this.config, (err, res) => {
                 if (err) {
                     console.log(err);
+                    logger.error(`${new Date().toString()} Servidor http ${err}`);
                 } else {
                     console.log('Base de datos SQL On Line');
                     this.app.listen(this.port, () => {
-                        console.log('Servidor http corriendo en puerto : ', this.port);
+                        logger.info(`${new Date().toString()} Servidor http corriendo en puerto : ${this.port}`);
                     });
 
                 }
@@ -73,7 +75,7 @@ class Server {
             // https
 
             https.createServer(https_options, this.app).listen(this.port, () => {
-                console.log('Servidor https corriendo en puerto : ', this.port);
+                logger.info(`${new Date().toString()} Servidor https corriendo en puerto : ${this.port}`);
             });
 
         };
