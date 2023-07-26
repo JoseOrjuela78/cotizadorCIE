@@ -160,7 +160,7 @@ module.exports.login = (request, response) => {
 
             const token = jwt.sign({
                 usuario: result.recordsets[3][0]
-            }, process.env.JWT_KEY, { expiresIn: '8h' })
+            }, 'C13C0L0M814_C07' /*process.env.JWT_KEY*/ , { expiresIn: '8h' })
 
 
             const msg = result.recordsets[2][0].MSG;

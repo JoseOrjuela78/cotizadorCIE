@@ -4,13 +4,15 @@ const UserRouters = require('../users/userRouters');
 const QuoteRouters = require('../quotes/quotesRouters');
 const TablesRoutes = require('../tables/tablesRouters')
 const https = require('https');
+const http = require('http');
 const mssql = require('mssql');
 const logger = require('./logger');
+const path = require('path');
 
 class Server {
 
     constructor() {
-        this.port = process.env.PORT;
+        this.port = 3005; //process.env.PORT;
         this.app = express();
         //Middlewares
         this.middlewares();
@@ -34,7 +36,7 @@ class Server {
     middlewares() {
         this.app.use(cors()); //control de acceso paginas
         this.app.use(express.json()); // parse y lectura de body
-        this.app.use(express.static('public')); // configuracion contenido html carpeta publica
+        this.app.use(express.static(path.join(__dirname, '../../public'))); // configuracion contenido html carpeta publica
         this.app.use(express.urlencoded({ extended: true }));
     }
 
@@ -64,9 +66,17 @@ class Server {
                     logger.error(`${new Date().toString()} Servidor http ${err}`);
                 } else {
                     console.log('Base de datos SQL On Line');
+
+                    http.createServer({}, this.app).listen(this.port, () => {
+                        logger.info(`${new Date().toString()} Servidor http corriendo en puerto : ${this.port}`);
+                    });
+
+
+                    /*
                     this.app.listen(this.port, () => {
                         logger.info(`${new Date().toString()} Servidor http corriendo en puerto : ${this.port}`);
                     });
+                    */
 
                 }
             });
