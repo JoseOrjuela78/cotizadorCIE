@@ -1,22 +1,13 @@
 const logger = require('../common/logger');
 const mssql = require('mssql');
+const operations = require('./tablesOperations');
 
 module.exports.generateTable = (request, response) => {
 
-    const req = new mssql.Request();
     const table = request.params.table;
     logger.info(`${new Date().toString()} Entry generateTable table:${table}`);
-    const sql = `SELECT * FROM ${table} WHERE estado = 1`;
 
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error generateTable - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
+    operations.generateTable(table).then((result) => {
 
         const message = `GET TABLA ${table}`
         const data = JSON.stringify(result.recordset);
@@ -27,11 +18,12 @@ module.exports.generateTable = (request, response) => {
             data
         });
 
-
-
-    });
+    })
 
 };
+
+
+
 //herramientas
 module.exports.inserttablas = (request, response) => {
 
@@ -61,97 +53,33 @@ module.exports.inserttablas = (request, response) => {
 
     } else {
 
+        operations.truncateTables(table).then((result) => {
 
-        const sql = table == "Usuarios" ? 'SELECT * FROM  Usuarios;' : `TRUNCATE TABLE ${table};`;
-
-
-        req.query(sql, (err, result) => {
-
-            if (err) {
-                logger.error(`${new Date().toString()} Error inserttablas - ${err}`);
-                return response.status(400).json({
-                    ok: false,
-                    err: err.originalError.info.message
-                });
-            };
-
-            if (table == "Herramientas") {
-
-                logger.info(`${new Date().toString()} Entry inserttablas Herramientas`);
-
-                arr.forEach(element => {
-
-                    const sql = `EXEC PR_INSERT_HERRAMIENTAS '${element.descripcion}',${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
-
-                    req.query(sql, (err, result) => {
-
-                        if (err) {
-                            logger.error(`${new Date().toString()} Error inserttablas  Herramientas- ${err}`);
-                            return response.status(400).json({
-                                ok: false,
-                                err: err.originalError.info.message
-                            });
-                        };
-
-
-                    });
-
-                });
-
-                logger.info(`${new Date().toString()} Result Herramientas - carga ${table} realizada`);
-
-                response.status(200).json({
-                    message: `carga ${table} realizada`
-                });
-
-                return;
-            } else if (table == "Listadetalle") {
+            if (table == "Listadetalle") {
 
                 logger.info(`${new Date().toString()} Entry inserttablas Listadetalle`);
-                const sql = `EXEC PR_INSERT_LISTADETALLE '@code OUTPUT', '@message OUTPUT';`;
 
-                req.query(sql, (err, result) => {
-
-                    if (err) {
-                        logger.error(`${new Date().toString()} Error inserttablas  Listadetalle- ${err}`);
-                        return response.status(400).json({
-                            ok: false,
-                            err: err.originalError.info.message
-                        });
-                    };
+                operations.listaDetalle().then((result) => {
 
                     logger.info(`${new Date().toString()} Result Listadetalle - carga ${table} realizada`);
 
                     response.status(200).json({
                         message: `carga ${table} realizada`
                     });
-                    return;
 
-
-                });
-
-
+                })
+                return;
 
 
             } else if (table == "Monedas") {
                 logger.info(`${new Date().toString()} Entry inserttablas Monedas`);
                 arr.forEach(element => {
 
-                    const sql = `EXEC PR_INSERT_MONEDAS '${element.id_moneda}','${element.moneda}',${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
+                    operations.monedas(element, user).then((result) => {
 
-                    req.query(sql, (err, result) => {
+                        logger.info(`${new Date().toString()} Result Moneda ${element} - cargada`);
 
-                        if (err) {
-                            logger.error(`${new Date().toString()} Error inserttablas  Monedas- ${err}`);
-                            return response.status(400).json({
-                                ok: false,
-                                err: err.originalError.info.message
-                            });
-                        };
-
-
-                    });
-
+                    })
                 });
 
                 logger.info(`${new Date().toString()} Result Monedas - carga ${table} realizada`);
@@ -164,21 +92,11 @@ module.exports.inserttablas = (request, response) => {
                 logger.info(`${new Date().toString()} Entry inserttablas Parametros`);
                 arr.forEach(element => {
 
-                    const sql = `EXEC PR_INSERT_PARAMETROS '${element.descripcion}','${element.valor}',${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
+                    operations.parametros(element, user).then((result) => {
 
-                    req.query(sql, (err, result) => {
+                        logger.info(`${new Date().toString()} Result Parametro ${element} - cargada`);
 
-                        if (err) {
-                            logger.error(`${new Date().toString()} Error inserttablas  Parametros- ${err}`);
-                            return response.status(400).json({
-
-                                ok: false,
-                                err: err.originalError.info.message
-
-                            });
-                        };
-
-                    });
+                    })
 
                 });
 
@@ -192,20 +110,11 @@ module.exports.inserttablas = (request, response) => {
                 logger.info(`${new Date().toString()} Entry inserttablas Proveedores`);
                 arr.forEach(element => {
 
-                    const sql = `EXEC PR_INSERT_PROVEEDORES '${element.id_proveedor}','${element.proveedor}',${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
+                    operations.proveedores(element, user).then((element) => {
 
-                    req.query(sql, (err, result) => {
+                        logger.info(`${new Date().toString()} Result Proveedor ${element} - cargada`);
 
-                        if (err) {
-                            logger.error(`${new Date().toString()} Error inserttablas  Proveedores- ${err}`);
-                            return response.status(400).json({
-                                ok: false,
-                                err: err.originalError.info.message
-                            });
-                        };
-
-
-                    });
+                    })
 
                 });
 
@@ -218,20 +127,12 @@ module.exports.inserttablas = (request, response) => {
             } else if (table == "RangosUSD") {
                 logger.info(`${new Date().toString()} Entry inserttablas RangosUSD`);
                 arr.forEach(element => {
-                    const sql = `EXEC PR_CREAR_RANGOUSD ${element.rango_min},${element.rango_max},${element.mark_up},${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
-                    req.query(sql, (err, result) => {
 
-                        if (err) {
-                            logger.error(`${new Date().toString()} Error inserttablas  RangosUSD- ${err}`);
-                            return response.status(400).json({
-                                ok: false,
-                                err: err.originalError.info.message
-                            });
-                        };
+                    operations.rangosUSD(element, user).then((result) => {
 
+                        logger.info(`${new Date().toString()} Result RangosUsd ${element} - cargada`);
 
-                    });
-
+                    })
 
                 });
 
@@ -241,45 +142,30 @@ module.exports.inserttablas = (request, response) => {
                     message: `carga ${table} realizada`
                 });
                 return;
+
             } else if (table == "Tarifas") {
                 logger.info(`${new Date().toString()} Entry inserttablas Tarifas`);
 
-                const sql = `EXEC PR_CREAR_TARIFAS '@code OUTPUT', '@message OUTPUT';`;
-                req.query(sql, (err, result) => {
+                operations.tarifas().then((result) => {
 
-                    if (err) {
-                        logger.error(`${new Date().toString()} Error inserttablas  Tarifas- ${err}`);
-                        return response.status(400).json({
-                            ok: false,
-                            err: err.originalError.info.message
-                        });
-                    };
+                    logger.info(`${new Date().toString()} Result Tarifas - carga ${table} realizada`);
+
+                    response.status(200).json({
+                        message: `carga ${table} realizada`
+                    });
+
+                })
 
 
-                });
-                logger.info(`${new Date().toString()} Result Tarifas - carga ${table} realizada`);
-
-                response.status(200).json({
-                    message: `carga ${table} realizada`
-                });
                 return;
             } else if (table == "Trm") {
                 logger.info(`${new Date().toString()} Entry inserttablas Trm`);
                 arr.forEach(element => {
-                    const sql = `EXEC PR_CREAR_TRM '${element.id_moneda}',${element.valor},${element.tasaUsd},${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
-                    req.query(sql, (err, result) => {
 
-                        if (err) {
-                            logger.error(`${new Date().toString()} Error inserttablas  Trm- ${err}`);
-                            return response.status(400).json({
-                                ok: false,
-                                err: err.originalError.info.message
-                            });
-                        };
+                    operations.trm(element, user).then((result) => {
 
-
-                    });
-
+                        logger.info(`${new Date().toString()} Result trm ${element} - cargada`);
+                    })
 
                 });
                 logger.info(`${new Date().toString()} Result Trm - carga ${table} realizada`);
@@ -290,21 +176,11 @@ module.exports.inserttablas = (request, response) => {
             } else if (table == "Usuarios") {
                 logger.info(`${new Date().toString()} Entry inserttablas Usuarios`);
                 arr.forEach(element => {
-                    const sql = `EXEC PR_CREAR_USUARIO '${element.identificacion}','${element.username}','${element.nombre}','${element.apellido}','${element.pass}',${element.rol},'@code OUTPUT', '@message OUTPUT';`;
-                    req.query(sql, (err, result) => {
 
-                        if (err) {
-                            logger.error(`${new Date().toString()} Error inserttablas  Usuarios- ${err}`);
-                            return response.status(400).json({
-                                ok: false,
-                                err: err.originalError.info.message
-                            });
-                        };
+                    operations.usuarios(element).then((result) => {
+                        logger.info(`${new Date().toString()} Result usuarios ${element} - cargada`);
 
-
-                    });
-
-
+                    })
                 });
                 logger.info(`${new Date().toString()} Result Usuarios - carga ${table} realizada`);
                 response.status(200).json({
@@ -314,73 +190,16 @@ module.exports.inserttablas = (request, response) => {
             } else if (table == "Vartarifas") {
                 logger.info(`${new Date().toString()} Entry inserttablas Vartarifas`);
                 arr.forEach(element => {
-                    const sql = `EXEC PR_CREAR_VARTARIFAS ${element.id_zona},${element.peso_min},${element.peso_max},${element.tarifa},${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
-                    req.query(sql, (err, result) => {
+                    operations.varTarifas(element, user).then((result) => {
 
-                        if (err) {
-                            logger.error(`${new Date().toString()} Error inserttablas  Vartarifas- ${err}`);
-                            return response.status(400).json({
-                                ok: false,
-                                err: err.originalError.info.message
-                            });
-                        };
+                        logger.info(`${new Date().toString()} Result Vartarifas ${element} - cargada`);
 
-
-                    });
-
+                    })
 
                 });
+
                 logger.info(`${new Date().toString()} Result Vartarifas - carga ${table} realizada`);
 
-                response.status(200).json({
-                    message: `carga ${table} realizada`
-                });
-                return;
-            } else if (table == "Zona_Moneda") {
-                logger.info(`${new Date().toString()} Entry inserttablas Zona_Moneda`);
-
-                arr.forEach(element => {
-                    const sql = `EXEC PR_CREAR_ZONAMONEDA '${element.id_moneda}',${element.id_zona},${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
-                    req.query(sql, (err, result) => {
-
-                        if (err) {
-                            logger.error(`${new Date().toString()} Error inserttablas  Zona_Moneda- ${err}`);
-                            return response.status(400).json({
-                                ok: false,
-                                err: err.originalError.info.message
-                            });
-                        };
-
-
-                    });
-
-
-                });
-                logger.info(`${new Date().toString()} Result Zona_Moneda - carga ${table} realizada`);
-                response.status(200).json({
-                    message: `carga ${table} realizada`
-                });
-                return;
-            } else if (table == "Zona_Proveedor") {
-                logger.info(`${new Date().toString()} Entry inserttablas Zona_Proveedor`);
-                arr.forEach(element => {
-                    const sql = `EXEC PR_CREAR_ZONAPROVEEDOR ${element.id_zm},'${element.id_proveedor}',${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
-                    req.query(sql, (err, result) => {
-
-                        if (err) {
-                            logger.error(`${new Date().toString()} Error inserttablas  Zona_Proveedor- ${err}`);
-                            return response.status(400).json({
-                                ok: false,
-                                err: err.originalError.info.message
-                            });
-                        };
-
-
-                    });
-
-
-                });
-                logger.info(`${new Date().toString()} Result Zona_Proveedor - carga ${table} realizada`);
                 response.status(200).json({
                     message: `carga ${table} realizada`
                 });
@@ -388,20 +207,12 @@ module.exports.inserttablas = (request, response) => {
             } else if (table == "Zonas") {
                 logger.info(`${new Date().toString()} Entry inserttablas Zonas`);
                 arr.forEach(element => {
-                    const sql = `EXEC PR_CREAR_ZONA '${element.zona}','${element.transportadora}',${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
-                    req.query(sql, (err, result) => {
 
-                        if (err) {
-                            logger.error(`${new Date().toString()} Error inserttablas  Zonas- ${err}`);
-                            return response.status(400).json({
-                                ok: false,
-                                err: err.originalError.info.message
-                            });
-                        };
+                    operations.zonas(element, user).then((result) => {
 
+                        logger.info(`${new Date().toString()} Result Zonas ${element} - cargada`);
 
-                    });
-
+                    })
 
                 });
                 logger.info(`${new Date().toString()} Result Zonas - carga ${table} realizada`);
@@ -412,26 +223,17 @@ module.exports.inserttablas = (request, response) => {
             } else if (table == "DescuentosVolumen") {
                 logger.info(`${new Date().toString()} Entry inserttablas DescuentosVolumen`);
 
-                const sql = `EXEC PR_INSERT_DTOVOLUMEN '@code OUTPUT', '@message OUTPUT';`;
-                req.query(sql, (err, result) => {
+                operations.descuentosVolumen().then((result) => {
 
-                    if (err) {
-                        logger.error(`${new Date().toString()} Error inserttablas  DescuentosVolumen- ${err}`);
-                        return response.status(400).json({
-                            ok: false,
-                            err: err.originalError.info.message
-                        });
-                    };
+                    logger.info(`${new Date().toString()} Result DescuentosVolumen - carga ${table} realizada`);
+
+                    response.status(200).json({
+                        message: `carga ${table} realizada`
+                    });
 
 
-                });
+                })
 
-
-                logger.info(`${new Date().toString()} Result DescuentosVolumen - carga ${table} realizada`);
-
-                response.status(200).json({
-                    message: `carga ${table} realizada`
-                });
                 return;
             } else {
                 logger.error(`${new Date().toString()} Error inserttablas  tabla no existe`);
@@ -443,118 +245,10 @@ module.exports.inserttablas = (request, response) => {
 
         });
 
-
-
     }
 };
 
-module.exports.updateHerramientas = (request, response) => {
 
-    const user = request.usuario;
-    const req = new mssql.Request();
-    const idherramienta = request.params.id;
-    const bd = request.body;
-    logger.info(`${new Date().toString()} Entry updateHerramientas idherramienta:${idherramienta} - body:${bd}`);
-
-    const sql = `EXEC PR_UPDATE_HERRAMIENTAS '${idherramienta}','${bd.descripcion}',${user.id_usuario},${bd.estado},'@code OUTPUT', '@message OUTPUT';`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error updateHerramientas - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
-        const code = result.recordsets[0][0].COD;
-        const msg = result.recordsets[1][0].MSG;
-
-        logger.info(`${new Date().toString()} Result updateHerramientas -code: ${code} - msg: ${msg}`);
-
-        response.status(code).json({
-            msg
-        });
-
-    });
-
-
-
-
-};
-
-//Lista detalle
-
-module.exports.getZonaProveedor = (request, response) => {
-
-    const req = new mssql.Request();
-
-    logger.info(`${new Date().toString()} Entry getZonaProveedor`);
-
-    const sql = `SELECT zp.id_zp, zm.id_moneda AS Moneda, zm.id_zona AS Zona,p.id_proveedor AS abv,p.proveedor AS Proveedor FROM Zona_Proveedor zp INNER JOIN Zona_Moneda zm ON zp.id_zm = zm.id_zm INNER JOIN Proveedores p ON p.id_proveedor = zp.id_proveedor WHERE zp.estado = 1;`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error getZonaProveedor - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
-
-        const code = 200
-        const msg = 'Get zona proveedor'
-        const data = result.recordset;
-
-        logger.info(`${new Date().toString()} Result getZonaProveedor - data: ${data}`);
-        response.status(code).json({
-            msg,
-            data
-        });
-
-    });
-
-
-
-
-};
-
-module.exports.updateListaDet = (request, response) => {
-
-    const user = request.usuario;
-    const req = new mssql.Request();
-    const idDetalle = request.params.id;
-    const bd = request.body;
-
-    logger.info(`${new Date().toString()} Entry updateListaDet idDetalle:${idDetalle}- body: ${bd}`);
-
-    const sql = `EXEC PR_UPDATE_LISTADET ${idDetalle},${bd.id_zp},${bd.id_herramienta},'${bd.part_number}',${bd.costo},${user.id_usuario},${bd.estado},'@code OUTPUT', '@message OUTPUT';`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error updateListaDet - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
-        const code = result.recordsets[0][0].COD;
-        const msg = result.recordsets[1][0].MSG;
-
-        logger.info(`${new Date().toString()} Result updateListaDet - code: ${code} -msg: ${msg}`);
-
-        response.status(code).json({
-            msg
-        });
-
-    });
-
-};
 
 module.exports.updateMoneda = (request, response) => {
 
@@ -564,6 +258,22 @@ module.exports.updateMoneda = (request, response) => {
     const bd = request.body;
 
     logger.info(`${new Date().toString()} Entry updateMoneda estado:${estado}`);
+
+    operations.updateMoneda(idMoneda, bd, user).then((result) => {
+
+        const code = result.recordsets[0][0].COD;
+        const msg = result.recordsets[1][0].MSG;
+
+        logger.info(`${new Date().toString()} Result updateMoneda - code: ${code} - msg: ${msg}`);
+
+        response.status(code).json({
+            msg
+        });
+
+
+    })
+
+
 
     const sql = `EXEC PR_UPDATE_MONEDA '${idMoneda}','${bd.moneda}',${user.id_usuario},${bd.estado},'@code OUTPUT', '@message OUTPUT';`;
 
@@ -587,6 +297,8 @@ module.exports.updateMoneda = (request, response) => {
         });
 
     });
+
+
 
 };
 
@@ -784,74 +496,6 @@ module.exports.updateVartarifa = (request, response) => {
         const msg = result.recordsets[1][0].MSG;
 
         logger.info(`${new Date().toString()} Result updateVartarifa - code: ${code} - msg: ${msg}`);
-
-        response.status(code).json({
-            msg
-        });
-
-    });
-
-};
-
-module.exports.updateZonaMoneda = (request, response) => {
-
-    const user = request.usuario;
-    const req = new mssql.Request();
-    const idZm = request.params.id;
-    const bd = request.body;
-
-    logger.info(`${new Date().toString()} Entry updateZonaMoneda idZm: ${idZm} - body: ${bd}`);
-
-    const sql = `EXEC PR_UPDATE_ZONAMONEDA ${idZm},'${bd.id_moneda}',${bd.id_zona},${user.id_usuario},${bd.estado},'@code OUTPUT', '@message OUTPUT';`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error updateZonaMoneda - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
-        const code = result.recordsets[0][0].COD;
-        const msg = result.recordsets[1][0].MSG;
-
-        logger.info(`${new Date().toString()} Result updateZonaMoneda - code: ${code} - msg: ${msg}`);
-
-        response.status(code).json({
-            msg
-        });
-
-    });
-
-};
-
-module.exports.updateZonaProveedor = (request, response) => {
-
-    const user = request.usuario;
-    const req = new mssql.Request();
-    const idZp = request.params.id;
-    const bd = request.body;
-
-    logger.info(`${new Date().toString()} Entry updateZonaProveedor idZp: ${idZp} - body: ${bd}`);
-
-    const sql = `EXEC PR_UPDATE_ZONAPROVEEDOR ${idZp},${bd.id_zm},'${bd.id_proveedor}',${user.id_usuario},${bd.estado},'@code OUTPUT', '@message OUTPUT';`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error updateZonaProveedor - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
-        const code = result.recordsets[0][0].COD;
-        const msg = result.recordsets[1][0].MSG;
-
-        logger.info(`${new Date().toString()} Result updateZonaProveedor - code: ${code} - msg: ${msg}`);
 
         response.status(code).json({
             msg

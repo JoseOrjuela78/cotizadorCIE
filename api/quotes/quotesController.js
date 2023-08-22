@@ -1,26 +1,17 @@
-const mssql = require('mssql');
 const logger = require('../common/logger');
+const operations = require('./quotesOperations');
+
 
 module.exports.createQuote = (request, response) => {
     const user = request.usuario;
-    const req = new mssql.Request();
     const bd = request.body;
     bd.cliente = String(bd.cliente).toLocaleUpperCase();
     const seller = user.nombre + " " + user.apellido;
 
     logger.info(`${new Date().toString()} Entry createQuote body : ${bd} seller : ${seller}`);
 
-    const sql = `EXEC PR_CREATE_COTIZACION '${bd.cliente}','${seller}',${user.id_usuario},'@id_cotizacion OUTPUT','@code OUTPUT', '@message OUTPUT';`;
 
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error createQuote - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
+    operations.createQuote(user, seller, bd).then((result) => {
 
         const code = parseInt(result.recordsets[0][0].COD);
         const message = result.recordsets[1][0].MSG;
@@ -33,28 +24,16 @@ module.exports.createQuote = (request, response) => {
         });
 
 
-
-    });
+    })
 
 };
 
 module.exports.createQuoteDetail = (request, response) => {
     const user = request.usuario;
-    const req = new mssql.Request();
     const bd = request.body;
     logger.info(`${new Date().toString()} Entry createQuoteDetail body : ${bd}`);
 
-    const sql = `EXEC PR_CREATE_COTIZACION_DET ${bd.id_cotizacion},${bd.id_detalle},${bd.cantidad},${bd.largoCM},${bd.anchoCM},${bd.altoCM},${bd.peso_kg},${user.id_usuario},'@id_cotdetalle OUTPUT','@code OUTPUT', '@message OUTPUT';`;
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error createQuoteDetail - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
+    operations.createQuoteDetail(user, bd).then((result) => {
 
         const code = parseInt(result.recordsets[0][0].COD);
         const message = result.recordsets[1][0].MSG;
@@ -67,32 +46,17 @@ module.exports.createQuoteDetail = (request, response) => {
             id_quote_detail
         });
 
-
-
-    });
-
+    })
 
 }
 
 module.exports.updateQuoteDetail = (request, response) => {
 
-    const req = new mssql.Request();
     const bd = request.body;
 
     logger.info(`${new Date().toString()} Entry updateQuoteDetail body: ${bd}`);
 
-    const sql = `EXEC PR_UPDATE_DETQUOTE ${bd.id_cotdetalle}, ${bd.cantidad},${bd.largoCM},${bd.anchoCM},${bd.altoCM},${bd.peso_kg},'@code OUTPUT', '@message OUTPUT';`;
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error updateQuoteDetail - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
-
+    operations.updateQuoteDetail(bd).then((result) => {
 
         const code = parseInt(result.recordsets[0][0].COD);
         const message = result.recordsets[1][0].MSG;
@@ -105,28 +69,16 @@ module.exports.updateQuoteDetail = (request, response) => {
             data
         });
 
-    });
-
+    })
 
 }
 
 module.exports.deleteQuoteDetail = (request, response) => {
-    const req = new mssql.Request();
-    const id = request.params.id;
 
+    const id = request.params.id;
     logger.info(`${new Date().toString()} Entry deleteQuoteDetail id: ${id}`);
 
-    const sql = `DELETE FROM Cotizacionesdetalle WHERE id_cotdetalle = ${id};`;
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error deleteQuoteDetail - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
+    operations.deleteQuoteDetail(id).then((result) => {
 
         const code = 200;
         const message = "ID BORRADO";
@@ -136,30 +88,17 @@ module.exports.deleteQuoteDetail = (request, response) => {
             message
         });
 
-
-
-    });
-
+    })
 
 }
 
 module.exports.generateQuote = (request, response) => {
 
-    const req = new mssql.Request();
     const bd = request.body;
 
     logger.info(`${new Date().toString()} Entry generateQuote body: ${bd}`);
 
-    const sql = `EXEC PR_COTIZAR ${bd.id_detalle}, ${bd.id_cotdetalle} ,'@code OUTPUT', '@message OUTPUT'`;
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error generateQuote - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
+    operations.generateQuote(bd).then((result) => {
 
         const code = parseInt(result.recordsets[0][0].COD);
         const message = result.recordsets[1][0].MSG;
@@ -173,29 +112,17 @@ module.exports.generateQuote = (request, response) => {
         });
 
 
-
-    });
+    })
 
 }
 
 module.exports.getQuotes = (request, response) => {
-    const req = new mssql.Request();
+
     const idquote = parseInt(request.params.idquote);
 
     logger.info(`${new Date().toString()} Entry getQuotes idquote: ${idquote}`);
 
-    const sql = `EXEC PR_DETQUOTE ${idquote} ,'@code OUTPUT', '@message OUTPUT';`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error getQuotes - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
+    operations.getQuotes(idquote).then((result) => {
 
         const message = 'GET LISTA COTIZACIONES';
         const list = result.recordsets[0];
@@ -214,63 +141,31 @@ module.exports.getQuotes = (request, response) => {
 };
 
 module.exports.getRef = (request, response) => {
-    const req = new mssql.Request();
+
     const key = request.params.key;
 
     logger.info(`${new Date().toString()} Entry getRef key: ${key}`);
 
-    const sql = `
-    SELECT
-    ld.id_detalle, 
-    ld.part_number,
-    ld.herramienta,
-    p.proveedor
-    FROM Listadetalle ld
-    INNER JOIN Proveedores p
-    ON p.id_proveedor = ld.proveedor
-    WHERE ld.part_number LIKE '${key}%';
-    `;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error getRef - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
-
+    operations.getRef(key).then((result) => {
         const message = 'GET LISTA REFERENCIAS';
         const list = result.recordsets[0];
-
         logger.info(`${new Date().toString()} Result getRef - ${list}`);
-
         response.status(200).json({
             message,
             list
         });
+    })
 
-    });
 
 };
 
+
 module.exports.closerQuote = (request, response) => {
 
-    const req = new mssql.Request();
     const bd = request.body;
     logger.info(`${new Date().toString()} Entry closerQuote bdy: ${bd}`);
-    const sql = `EXEC PR_INSERT_TOTALES ${bd.id_cotizacion}, '@code OUTPUT', '@message OUTPUT';`;
-    req.query(sql, (err, result) => {
 
-        if (err) {
-            logger.error(`${new Date().toString()} Error closerQuote - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
+    operations.closerQuote(bd).then((result) => {
 
         const code = parseInt(result.recordsets[0][0].COD);
         const message = result.recordsets[1][0].MSG;
@@ -286,28 +181,16 @@ module.exports.closerQuote = (request, response) => {
         });
 
 
-
-    });
-
+    })
 
 }
 
 module.exports.closeQuoteRows = (request, response) => {
 
-    const req = new mssql.Request();
     const bd = request.body;
     logger.info(`${new Date().toString()} Entry closeQuoteRows body: ${bd}`);
-    const sql = `EXEC PR_UPDATE_TOTALES ${bd.id_cotTotales},${bd.id_cotizacion},'@code OUTPUT', '@message OUTPUT'`;
 
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error closeQuoteRows - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
+    operations.closeQuoteRows(bd).then((result) => {
 
         const code = parseInt(result.recordsets[0][0].COD);
         const message = result.recordsets[1][0].MSG;
@@ -321,27 +204,16 @@ module.exports.closeQuoteRows = (request, response) => {
         });
 
 
-
-    });
+    })
 
 }
 
 module.exports.getTotalDto = (request, response) => {
-    const req = new mssql.Request();
+
     const idquote = parseInt(request.params.idquote);
     logger.info(`${new Date().toString()} Entry getTotalDto idquote: ${idquote}`);
 
-    const sql = `SELECT SUM(Cpreciototal) as 'TotalDto' FROM CotizacionesTotales WHERE id_cotizacion = ${idquote};`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error getTotalDto - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
+    operations.getTotalDto(idquote).then((result) => {
 
         const totalDto = result.recordset[0].TotalDto;
         const message = 'GET TOTAL CON DESCUENTO';
@@ -354,29 +226,18 @@ module.exports.getTotalDto = (request, response) => {
 
         });
 
-    });
+
+    })
+
 
 };
 
 module.exports.Cpeso = (request, response) => {
 
-    const req = new mssql.Request();
     const bd = request.body;
     logger.info(`${new Date().toString()} Entry Cpeso body: ${bd}`);
 
-    const sql = `EXEC PR_CPESO ${bd.id_detalle}, ${bd.cantidad}, ${bd.peso_kg},${bd.largoCM},${bd.anchoCM},${bd.altoCM},'@code OUTPUT', '@message OUTPUT'`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error Cpeso - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
-
+    operations.Cpeso(bd).then((result) => {
 
         const code = parseInt(result.recordsets[0][0].COD);
         const message = result.recordsets[1][0].MSG;
@@ -388,96 +249,58 @@ module.exports.Cpeso = (request, response) => {
             message
         });
 
-
-
-    });
+    })
 
 };
 
 module.exports.getSellers = (request, response) => {
-    const req = new mssql.Request();
+
     logger.info(`${new Date().toString()} Entry getSellers`);
 
-    const sql = `select DISTINCT (vendedor), id_usuario from Cotizaciones  ORDER BY vendedor;`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error getSellers - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
+    operations.getSellers().then((result) => {
 
         const message = 'GET LISTA VENDEDORES';
         const list = result.recordsets[0];
 
         logger.info(`${new Date().toString()} Result getSellers - list: ${list}`);
 
-
         response.status(200).json({
             message,
             list
         });
 
-    });
+    })
 
 };
 
 module.exports.getCustomers = (request, response) => {
-    const req = new mssql.Request();
     const idUsuario = request.params.id;
     logger.info(`${new Date().toString()} Entry getCustomers idUsuario: ${idUsuario}`);
 
-    const sql = `select DISTINCT (CLIENTE) from Cotizaciones WHERE id_usuario = ${idUsuario} ORDER BY CLIENTE;`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error getCustomers - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
+    operations.getCustomers(idUsuario).then((result) => {
 
         const message = 'GET LISTA CLIENTES';
         const list = result.recordsets[0];
 
         logger.info(`${new Date().toString()} Result getCustomers - ${list}`);
 
-
         response.status(200).json({
             message,
             list
         });
 
-    });
+    })
 
 };
 
 module.exports.getidQuotes = (request, response) => {
 
-    const req = new mssql.Request();
     const cliente = request.params.cl;
     const idUsuario = parseInt(request.params.id);
 
     logger.info(`${new Date().toString()} Entry getidQuotes cliente: ${cliente}- idUsuario:${idUsuario}`);
 
-    const sql = `SELECT DISTINCT(c.id_cotizacion) as id_cotizacion FROM Cotizaciones c INNER JOIN Cotizacionesdetalle cd ON c.id_cotizacion = cd.id_cotizacion WHERE UPPER(c.cliente) = UPPER('${cliente}') AND c.id_usuario = ${idUsuario} ORDER BY c.id_cotizacion DESC;`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error getidQuotes - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
+    operations.getidQuotes(cliente, idUsuario).then((result) => {
 
         const message = `GET TABLA Cotizaciones`
         const data = JSON.stringify(result.recordset);
@@ -490,26 +313,15 @@ module.exports.getidQuotes = (request, response) => {
 
         });
 
-    });
+    })
 
 };
 
 module.exports.getQuoteDetail = (request, response) => {
-    const req = new mssql.Request();
     const idquote = parseInt(request.params.idquote);
     logger.info(`${new Date().toString()} Entry getQuoteDetail idquote:${idquote}`);
 
-    const sql = `EXEC PR_GET_QUOTE ${idquote},'@code OUTPUT', '@message OUTPUT'`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error getQuoteDetail - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
+    operations.getQuoteDetail(idquote).then((result) => {
 
         const codeIde = result.recordsets[0][0].COD || '0';
 
@@ -544,40 +356,28 @@ module.exports.getQuoteDetail = (request, response) => {
 
         };
 
-    });
+
+    })
 
 };
 
 module.exports.getBrands = (request, response) => {
-    const req = new mssql.Request();
     const key = request.params.key;
 
     logger.info(`${new Date().toString()} Entry getBrands key:${key}`);
 
-    const sql = `SELECT * FROM Proveedores ORDER BY id_proveedor ASC;`;
-
-    req.query(sql, (err, result) => {
-
-        if (err) {
-            logger.error(`${new Date().toString()} Error getBrands - ${err}`);
-            return response.status(400).json({
-                ok: false,
-                err: err.originalError.info.message
-            });
-        };
-
+    operations.getBrands().then((result) => {
 
         const message = 'GET LISTA MARCAS';
         const list = result.recordsets[0];
 
         logger.info(`${new Date().toString()} Result getBrands - ${list}`);
 
-
         response.status(200).json({
             message,
             list
         });
 
-    });
+    })
 
 };

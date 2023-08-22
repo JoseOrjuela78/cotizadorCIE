@@ -5,7 +5,6 @@ const QuoteRouters = require('../quotes/quotesRouters');
 const TablesRoutes = require('../tables/tablesRouters')
 const https = require('https');
 const http = require('http');
-const mssql = require('mssql');
 const logger = require('./logger');
 const path = require('path');
 
@@ -19,18 +18,6 @@ class Server {
         //Routes
         this.routes();
 
-        this.config = {
-            user: 'sa', //'sqlserver', 
-            password: '123456', //"'I[tD|e;'gP91VfM",
-            server: '192.168.20.46', //'34.72.67.247', 
-            port: 1433,
-            database: 'CotizadorV3', //'cotizador', 
-            options: {
-                enableArithAbort: true,
-                encrypt: false
-            }
-
-        };
     }
 
     middlewares() {
@@ -60,26 +47,27 @@ class Server {
         if (!privateKey) {
 
             // http
-            const connetion = mssql.connect(this.config, (err, res) => {
-                if (err) {
-                    console.log(err);
-                    logger.error(`${new Date().toString()} Servidor http ${err}`);
-                } else {
-                    console.log('Base de datos SQL On Line');
+            // const connetion = mssql.connect(this.config, (err, res) => {
+            //   if (err) {
+            //     console.log(err);
+            //   logger.error(`${new Date().toString()} Servidor http ${err}`);
+            // } else {
+            //   console.log('Base de datos SQL On Line');
 
-                    http.createServer({}, this.app).listen(this.port, () => {
-                        logger.info(`${new Date().toString()} Servidor http corriendo en puerto : ${this.port}`);
-                    });
-
-
-                    /*
-                    this.app.listen(this.port, () => {
-                        logger.info(`${new Date().toString()} Servidor http corriendo en puerto : ${this.port}`);
-                    });
-                    */
-
-                }
+            http.createServer({}, this.app).listen(this.port, () => {
+                console.log('Servidor http corriendo en puerto : ', this.port);
+                logger.info(`${new Date().toString()} Servidor http corriendo en puerto : ${this.port}`);
             });
+
+
+            /*
+            this.app.listen(this.port, () => {
+                logger.info(`${new Date().toString()} Servidor http corriendo en puerto : ${this.port}`);
+            });
+            */
+
+            // }
+            //});
 
         } else {
             // https
