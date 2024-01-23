@@ -53,9 +53,10 @@ operations.parametros = async(element, user) => {
 
 operations.proveedores = async(element, user) => {
 
-    const sql = `EXEC PR_INSERT_PROVEEDORES '${element.id_proveedor}','${element.proveedor}',${user.id_usuario},'@code OUTPUT', '@message OUTPUT';`;
+    const sql = `EXEC PR_INSERT_PROVEEDORES '@code OUTPUT', '@message OUTPUT';`;
 
     return databaseFuncs.executeQuery(sql, 'proveedores').then(result => {
+
         return result
     });
 }

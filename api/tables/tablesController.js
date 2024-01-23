@@ -108,15 +108,16 @@ module.exports.inserttablas = (request, response) => {
                 return;
             } else if (table == "Proveedores") {
                 logger.info(`${new Date().toString()} Entry inserttablas Proveedores`);
-                arr.forEach(element => {
 
-                    operations.proveedores(element, user).then((element) => {
 
-                        logger.info(`${new Date().toString()} Result Proveedor ${element} - cargada`);
+                operations.proveedores().then((element) => {
 
-                    })
+                    logger.info(`${new Date().toString()} Result Proveedor ${element} - cargada`);
 
                 });
+
+
+
 
                 logger.info(`${new Date().toString()} Result Proveedores - carga ${table} realizada`);
 
@@ -124,6 +125,7 @@ module.exports.inserttablas = (request, response) => {
                     message: `carga ${table} realizada`
                 });
                 return;
+
             } else if (table == "RangosUSD") {
                 logger.info(`${new Date().toString()} Entry inserttablas RangosUSD`);
                 arr.forEach(element => {
