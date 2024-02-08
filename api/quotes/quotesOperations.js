@@ -142,7 +142,7 @@ operations.getCustomers = async(idUsuario) => {
 
 operations.getidQuotes = async(cliente, idUsuario) => {
 
-    const sql = `SELECT DISTINCT(c.id_cotizacion) as id_cotizacion FROM Cotizaciones c INNER JOIN Cotizacionesdetalle cd ON c.id_cotizacion = cd.id_cotizacion WHERE UPPER(c.cliente) = UPPER('${cliente}') AND c.id_usuario = ${idUsuario} ORDER BY c.id_cotizacion DESC;`;
+    const sql = `SELECT DISTINCT(c.id_cotizacion) as id_cotizacion FROM Cotizaciones c INNER JOIN Cotizacionesdetalle cd ON c.id_cotizacion = cd.id_cotizacion INNER JOIN CotizacionesTotales ct ON ct.id_cotizacion = c.id_cotizacion WHERE UPPER(c.cliente) = UPPER('${cliente}') AND c.id_usuario = ${idUsuario} ORDER BY c.id_cotizacion DESC;`;
 
     return databaseFuncs.executeQuery(sql, 'getidQuotes').then(result => {
         return result
