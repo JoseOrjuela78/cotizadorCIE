@@ -335,11 +335,11 @@ module.exports.getQuoteDetail = (request, response) => {
             });
 
         } else {
-            const quoteDta = JSON.stringify(result.recordset[0]);
-            const quoteDetail = JSON.stringify(result.recordsets[1]);
-            const quoteTotalZona = JSON.stringify(result.recordsets[2]);
-            const quoteTotal = JSON.stringify(result.recordsets[3]);
-            const quoteTotalDto = JSON.stringify(result.recordsets[4]);
+            global.quoteDta = JSON.stringify(result.recordset[0]);
+            global.quoteDetail = JSON.stringify(result.recordsets[1]);
+            global.quoteTotalZona = JSON.stringify(result.recordsets[2]);
+            global.quoteTotal = JSON.stringify(result.recordsets[3]);
+            global.quoteTotalDto = JSON.stringify(result.recordsets[4]);
             const code = parseInt(result.recordsets[5][0].COD);
             const message = result.recordsets[6][0].MSG;
 

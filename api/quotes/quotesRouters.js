@@ -3,6 +3,24 @@ const router = Router();
 const quotesController = require('./quotesController');
 const { verificaToken } = require('../common/authorization');
 
+const buildPdf = require('../common/libs/pdfkit.js');
+
+router.get('/api/quotes/pdf', (request, response) => {
+
+    const bd = request.body;
+
+    const stream = response.writeHead(200, {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": "attachment; filename=invoice.pdf"
+    })
+
+    buildPdf((data) => stream.write(data),
+        () => stream.end()
+    );
+
+    //response.send('invoice');
+});
+
 
 router.post('/api/quote', [verificaToken], quotesController.createQuote);
 router.post('/api/quote-detail', [verificaToken], quotesController.createQuoteDetail);
@@ -20,6 +38,8 @@ router.get('/api/quotes/:cl/:id', [verificaToken], quotesController.getidQuotes)
 router.get('/api/brands', [verificaToken], quotesController.getBrands);
 router.get('/api/sellers', [verificaToken], quotesController.getSellers);
 router.get('/api/customers/:id', [verificaToken], quotesController.getCustomers);
+
+
 
 
 module.exports = router;
