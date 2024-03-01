@@ -32,7 +32,7 @@ operations.updateQuoteDetail = async(bd) => {
 
 operations.deleteQuoteDetail = async(id) => {
 
-    const sql = `DELETE FROM Cotizacionesdetalle WHERE id_cotdetalle = ${id};`;
+    const sql = `DELETE FROM Cotizacionesdetalle_v2 WHERE id_cotdetalle = ${id};`;
 
     return databaseFuncs.executeQuery(sql, 'deleteQuoteDetail').then(result => {
         return result
@@ -64,6 +64,7 @@ operations.getRef = async(key) => {
 
     const sql = `
     SELECT
+    TOP 10
     ld.id_detalle, 
     ld.part_number,
     ld.herramienta,
@@ -90,18 +91,21 @@ operations.closerQuote = async(bd) => {
 }
 
 operations.closeQuoteRows = async(bd) => {
+    /*
+        const sql = `EXEC PR_UPDATE_TOTALES ${bd.id_cotTotales},${bd.id_cotizacion},'@code OUTPUT', '@message OUTPUT'`;
 
-    const sql = `EXEC PR_UPDATE_TOTALES ${bd.id_cotTotales},${bd.id_cotizacion},'@code OUTPUT', '@message OUTPUT'`;
+        return databaseFuncs.executeQuery(sql, 'closeQuoteRows').then(result => {
+            return result
+        });
+        */
 
-    return databaseFuncs.executeQuery(sql, 'closeQuoteRows').then(result => {
-        return result
-    });
+    return null;
 
 }
 
 operations.getTotalDto = async(idquote) => {
 
-    const sql = `SELECT SUM(Cpreciototal) as 'TotalDto' FROM CotizacionesTotales WHERE id_cotizacion = ${idquote};`;
+    const sql = `SELECT proveedor, SUM(Tpreciototal) as 'Total', SUM( Cdescuento) as 'Total_Descuento' FROM CotizacionesTotales WHERE id_cotizacion =  ${idquote} GROUP BY proveedor;`;
 
     return databaseFuncs.executeQuery(sql, 'getTotalDto').then(result => {
         return result

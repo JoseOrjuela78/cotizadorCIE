@@ -59,8 +59,10 @@ module.exports.postUser = (request, response) => {
 
     const user = request.usuario;
     const bd = request.body;
+
+
     const salt = bcrypt.genSaltSync(10);
-    bd.password = bcrypt.hashSync(bd.password, salt);
+    bd.password = bcrypt.hashSync(bd.pass, salt);
     bd.nombre = String(bd.nombre).toLocaleUpperCase();
     bd.apellido = String(bd.apellido).toLocaleUpperCase();
 
@@ -76,6 +78,7 @@ module.exports.postUser = (request, response) => {
         });
 
     });
+
 
 };
 

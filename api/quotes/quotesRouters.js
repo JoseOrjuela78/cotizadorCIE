@@ -7,7 +7,6 @@ const buildPdf = require('../common/libs/pdfkit.js');
 
 router.get('/api/quotes/pdf', (request, response) => {
 
-    const bd = request.body;
 
     const stream = response.writeHead(200, {
         "Content-Type": "application/pdf",
@@ -18,10 +17,10 @@ router.get('/api/quotes/pdf', (request, response) => {
         () => stream.end()
     );
 
-    //response.send('invoice');
+
 });
 
-
+router.get('/api/rescue/:status', [verificaToken], quotesController.rescue);
 router.post('/api/quote', [verificaToken], quotesController.createQuote);
 router.post('/api/quote-detail', [verificaToken], quotesController.createQuoteDetail);
 router.put('/api/quote-detail', [verificaToken], quotesController.updateQuoteDetail);

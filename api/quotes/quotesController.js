@@ -192,6 +192,16 @@ module.exports.closeQuoteRows = (request, response) => {
 
     operations.closeQuoteRows(bd).then((result) => {
 
+        if (result === null) {
+
+            response.status(200).json({
+                message: null,
+                rows: null
+            });
+
+            return
+
+        };
         const code = parseInt(result.recordsets[0][0].COD);
         const message = result.recordsets[1][0].MSG;
         const rows = JSON.stringify(result.recordsets[2]);
@@ -214,8 +224,9 @@ module.exports.getTotalDto = (request, response) => {
     logger.info(`${new Date().toString()} Entry getTotalDto idquote: ${idquote}`);
 
     operations.getTotalDto(idquote).then((result) => {
+        console.log(result);
 
-        const totalDto = result.recordset[0].TotalDto;
+        const totalDto = result.recordset;
         const message = 'GET TOTAL CON DESCUENTO';
 
         logger.info(`${new Date().toString()} Result getTotalDto - totalDto ${totalDto}`);
@@ -335,13 +346,15 @@ module.exports.getQuoteDetail = (request, response) => {
             });
 
         } else {
+
             global.quoteDta = JSON.stringify(result.recordset[0]);
             global.quoteDetail = JSON.stringify(result.recordsets[1]);
             global.quoteTotalZona = JSON.stringify(result.recordsets[2]);
             global.quoteTotal = JSON.stringify(result.recordsets[3]);
             global.quoteTotalDto = JSON.stringify(result.recordsets[4]);
-            const code = parseInt(result.recordsets[5][0].COD);
-            const message = result.recordsets[6][0].MSG;
+            global.userData = JSON.stringify(result.recordsets[5][0]);
+            const code = parseInt(result.recordsets[6][0].COD);
+            const message = result.recordsets[7][0].MSG;
 
             logger.info(`${new Date().toString()} Result getQuoteDetail - quoteDta: ${quoteDta} - quoteDetail: ${quoteDetail}- quoteTotalZona: ${quoteTotalZona}- quoteTotal: ${quoteTotal}- quoteTotalDto: ${quoteTotalDto}`);
 
@@ -379,5 +392,23 @@ module.exports.getBrands = (request, response) => {
         });
 
     })
+
+};
+
+
+
+
+module.exports.rescue = (request, response) => {
+    const status = parseInt(request.params.status);
+    console.log({ status });
+    if (status == null || status == undefined) {
+        global.rescue = 0;
+    } else {
+        global.rescue = status;
+    };
+
+    response.status(200).json({
+        message: `status : ${global.rescue} activada`
+    });
 
 };
