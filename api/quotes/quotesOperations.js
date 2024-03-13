@@ -32,7 +32,7 @@ operations.updateQuoteDetail = async(bd) => {
 
 operations.deleteQuoteDetail = async(id) => {
 
-    const sql = `DELETE FROM Cotizacionesdetalle_v2 WHERE id_cotdetalle = ${id};`;
+    const sql = `DELETE FROM Cotizacionesdetalle WHERE id_cotdetalle = ${id};`;
 
     return databaseFuncs.executeQuery(sql, 'deleteQuoteDetail').then(result => {
         return result
