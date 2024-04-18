@@ -12,11 +12,13 @@ operations.login = async(bd) => {
 
 operations.postUser = async(bd) => {
 
-    const sql = `EXEC PR_CREAR_USUARIO '${bd.identificacion}','${bd.username}','${bd.nombre}','${bd.apellido}','${bd.password}',${bd.rol},'@code OUTPUT','@message OUTPUT'`;
+    const sql = `EXEC PR_CREAR_USUARIO '${bd.identificacion}','${bd.username}','${bd.nombre}','${bd.apellido}','${bd.telefono}','${bd.celular}','${bd.email}','${bd.pass}',${bd.rol},'@code OUTPUT','@message OUTPUT'`;
+    console.log("postUser : ", sql);
 
     return databaseFuncs.executeQuery(sql, 'postUser').then(result => {
         return result
     });
+
 
 }
 
@@ -41,7 +43,7 @@ operations.getIdUsers = async(identificacion) => {
 
 operations.updateUser = async(identificacion, bd) => {
 
-    const sql = `PR_UPDATE_USUARIO '${identificacion}','${bd.nombre}','${bd.apellido}','${bd.pass}',${bd.rol},${bd.estado},'@code OUTPUT', '@message OUTPUT';`;
+    const sql = `PR_UPDATE_USUARIO '${identificacion}','${bd.nombre}','${bd.apellido}','${bd.telefono}','${bd.celular}','${bd.email}','${bd.pass}',${bd.rol},${bd.estado},'@code OUTPUT', '@message OUTPUT';`;
 
     return databaseFuncs.executeQuery(sql, 'updateUser').then(result => {
         return result

@@ -5,7 +5,7 @@ const databaseFuncs = {};
 const sqlConfig = {
     user: 'sa',
     password: '123456',
-    database: 'CotizadorV3',
+    database: 'CotizadorV4',
     server: '192.168.20.46',
     pool: {
         max: 10,

@@ -7,11 +7,18 @@ module.exports = async function buildPdf(dataCalback, endCallback) {
     const bd = {
         "data": global.quoteDta,
         "detail": global.quoteDetail,
-        "total": global.quoteTotal
+        "total": global.quoteTotal,
+        "descuento": global.quoteTotalDto,
+        "user": global.userData,
+        "rescue": parseInt(global.rescue)
     };
 
-    const { data, detail, total } = bd;
+    const { data, detail, total, user } = bd;
 
+    const totalStandart = (JSON.parse(total)[0].TOTAL);
+    const totalRescue = totalStandart - (JSON.parse(bd.descuento)[0].TOTAL_DTO);
+
+    const userData = JSON.parse(user);
     const dtBody = JSON.parse(data);
 
     const idCot = (dtBody.id_cotizacion).toString();
@@ -26,15 +33,15 @@ module.exports = async function buildPdf(dataCalback, endCallback) {
         const id = (index + 1).toString();
         const descripcion = (element.descripcion).toUpperCase();
         const cantidad = (element.cantidad).toString();
-        const precio = `$${(element.preciolistaCOP).toLocaleString()}`;
-        const total = `$${(element.preciototal).toLocaleString()}`;
+        const precio = bd.rescue == 0 ? `$${Math.ceil((element.preciolistaCOP)).toLocaleString()}` : `$${Math.ceil((element.precioRescateCOP)).toLocaleString()}`;
+        const total = bd.rescue == 0 ? `$${Math.ceil((element.preciototal)).toLocaleString()}` : `$${Math.ceil((element.preciototalRescate)).toLocaleString()}`;
 
         rowsBody.push([id, descripcion, cantidad, "pcs.", precio, total]);
     });
 
-    const totalBody = `$${(JSON.parse(total)[0].TOTAL).toLocaleString()}`;
-    const Iva = `$${(JSON.parse(total)[0].TOTAL * 0.19).toLocaleString()}`;
-    const totalIva = `$${(JSON.parse(total)[0].TOTAL * 1.19).toLocaleString()}`;
+    const totalBody = bd.rescue == 0 ? `$${Math.ceil((totalStandart)).toLocaleString()}` : `$${Math.ceil((totalRescue)).toLocaleString()}`;
+    const Iva = bd.rescue == 0 ? `$${(Math.ceil(totalStandart * 0.19)).toLocaleString()}` : `$${(Math.ceil(totalRescue * 0.19)).toLocaleString()}`;
+    const totalIva = bd.rescue == 0 ? `$${Math.ceil((totalStandart * 1.19)).toLocaleString()}` : `$${Math.ceil((totalRescue * 1.19)).toLocaleString()}`;
 
     const marginLeft = 50;
 
@@ -81,7 +88,11 @@ module.exports = async function buildPdf(dataCalback, endCallback) {
 
     doc.on("data", dataCalback);
     doc.on("end", endCallback);
-    doc.image(path.join(__dirname, './img/logo.png'), marginLeft, 30, { width: 300 });
+    doc.fontSize(10).font('Helvetica-Bold').text(`Cie de Colombia SAS`, 180, 30);
+    doc.fontSize(10).font('Helvetica').text(`Cra 21 No 100-20 OFC. 702 Bogotá D.C`, 180, 45);
+    doc.fontSize(10).font('Helvetica').text(`Teléfono: PBX ${userData.telefono} /Movil ${userData.celular}`, 180, 55);
+    doc.fontSize(10).font('Helvetica').text(`E-mail: ${userData.email}`, 180, 65);
+    doc.image(path.join(__dirname, './img/logo.png'), marginLeft, 30, { width: 100 });
     doc.fontSize(12).font('Helvetica-Bold').text(`Señores: ${customer}`, marginLeft, 155);
     doc.fontSize(11).font('Helvetica-Bold').text(`Girada el: ${fecha}`, 350, 180);
     doc.fontSize(11).font('Helvetica-Bold').text(`Cotización # ${idCot}`, marginLeft, 180);
