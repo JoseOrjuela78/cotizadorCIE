@@ -105,7 +105,7 @@ operations.closeQuoteRows = async(bd) => {
 
 operations.getTotalDto = async(idquote) => {
 
-    const sql = `SELECT proveedor, SUM(Tpreciototal) as 'Total', SUM( Cdescuento) as 'Total_Descuento' FROM CotizacionesTotales WHERE id_cotizacion =  ${idquote} GROUP BY proveedor;`;
+    const sql = `SELECT c.* FROM CotizacionesTotales c WHERE c.id_cotizacion =  ${idquote}`;
 
     return databaseFuncs.executeQuery(sql, 'getTotalDto').then(result => {
         return result

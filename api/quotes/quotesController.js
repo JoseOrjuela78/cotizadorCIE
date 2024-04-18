@@ -167,6 +167,8 @@ module.exports.closerQuote = (request, response) => {
 
     operations.closerQuote(bd).then((result) => {
 
+        console.log({ result });
+
         const code = parseInt(result.recordsets[0][0].COD);
         const message = result.recordsets[1][0].MSG;
         const rows = JSON.stringify(result.recordsets[2]);
