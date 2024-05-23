@@ -124,7 +124,7 @@ module.exports = async function buildPdf(dataCalback, endCallback) {
         marginYfirmas = 300;
     };
 
-    doc.image(path.join(__dirname, './img/p2.png'), marginLeft, (marginY), { width: 500 });
+    doc.image(path.join(__dirname, './img/contenido.png'), marginLeft, (marginY), { width: 500 });
     doc.fontSize(10).font('Helvetica-Bold').text(`Elaboro:   ____________________________________________  (${seller})`, marginLeft, (marginY + marginYfirmas));
     doc.fontSize(10).font('Helvetica-Bold').text(`Elaboro:   ____________________________________________  (${seller})`, marginLeft, (marginY + marginYfirmas + 40));
     doc.end();
