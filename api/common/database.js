@@ -6,7 +6,7 @@ const sqlConfig = {
     user: 'sa',
     password: '123456',
     database: 'CotizadorV4',
-    server: '192.168.20.46',
+    server: '127.0.0.1',
     pool: {
         max: 10,
         min: 0,
@@ -20,9 +20,10 @@ const sqlConfig = {
 }
 
 
-databaseFuncs.executeQuery = async(sqlquery, func) => {
+databaseFuncs.executeQuery = async(sqlquery, func, database = 'CotizadorV4') => {
     try {
         // make sure that any items are correctly URL encoded in the connection string
+        sqlConfig.database = database;
         await sql.connect(sqlConfig)
         const result = await sql.query(sqlquery);
         await sql.close();

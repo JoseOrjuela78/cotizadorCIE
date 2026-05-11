@@ -5,6 +5,7 @@ const logger = createLogger({
     format: format.json(),
     defaultMeta: { service: 'user-cotizador' },
     transports: [
+        new transports.Console(),
         new transports.File({
             maxFiles: 25,
             filename: `error.log`,
