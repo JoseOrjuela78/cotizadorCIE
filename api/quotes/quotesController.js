@@ -1,289 +1,347 @@
 const logger = require('../common/logger');
 const operations = require('./quotesOperations');
+const AppError = require('../common/appError');
 
 
-module.exports.createQuote = (request, response) => {
+module.exports.createQuote = async (request, response) => {
     const user = request.usuario;
-    const bd = request.body;
-    bd.cliente = String(bd.cliente).toLocaleUpperCase();
-    const seller = user.nombre + " " + user.apellido;
+    const body = request.body;
+    body.vendedor = user.nombre + " " + user.apellido;
+    body.id_usuario = user.id_usuario;
+    logger.info(`Entry createQuote with: ${JSON.stringify({ body, user })})}`);
+    const attString = ['cliente','vendedor'];
+    const attNumber = ['@id_usuario'];
 
-    logger.info(`${new Date().toString()} Entry createQuote body : ${bd} seller : ${seller}`);
+    try { 
+        for (let key in body) {
+            const status = body[key] === null || body[key] === undefined;
+            if (status) throw new AppError(`${key} no puede ser nulo`, 422);
+            if (!status && typeof status === 'string' && body[key].trim() === '') throw new AppError(`${key} no puede estar vacío`, 422);
+            if (!status && attString.includes(key) && typeof body[key] != 'string') throw new AppError(`${key} debe ser un string`, 422);
+            if (!status && attNumber.includes(key) && typeof body[key] != 'number') throw new AppError(`${key} debe ser un numero`, 422);
+        };
 
+        body.cliente = body.cliente.toString().toLocaleUpperCase();
+             
+        const result = await operations.createQuoteR(body);
 
-    operations.createQuote(user, seller, bd).then((result) => {
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
 
-        const code = parseInt(result.recordsets[0][0].COD);
-        const message = result.recordsets[1][0].MSG;
-        const id_quote = result.recordsets[2][0].id_cotizacion;
+        logger.info(`${JSON.stringify(result)}`);
 
-        logger.info(`${new Date().toString()} Result createQuote - id_quote : ${id_quote}`);
-        response.status(code).json({
-            message,
-            id_quote
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
+            id_quote: result.id_cotizacion
         });
 
-
-    })
+    } catch (error) { 
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    }
 
 };
 
-module.exports.createQuoteDetail = (request, response) => {
+module.exports.createQuoteDetail = async(request, response) => {
     const user = request.usuario;
-    const bd = request.body;
-    logger.info(`${new Date().toString()} Entry createQuoteDetail body : ${bd}`);
+    const body = request.body;
+    body.id_usuario = user.id_usuario;
+    logger.info(`Entry createQuoteDetail with: ${JSON.stringify({ body, user })})}`);
+    const attNumber = ['id_cotizacion', 'id_detalle','cantidad','largoCM','anchoCM','altoCM','peso_kg'];
+    try { 
+        for (let key in body) {
+            const status = body[key] === null || body[key] === undefined;
+            if (status) throw new AppError(`${key} no puede ser nulo`, 422);
+            if (!status && typeof status === 'string' && body[key].trim() === '') throw new AppError(`${key} no puede estar vacío`, 422);
+            if (!status && attNumber.includes(key) && typeof body[key] != 'number') throw new AppError(`${key} debe ser un numero`, 422);
+        };
 
-    operations.createQuoteDetail(user, bd).then((result) => {
+        const result = await operations.createQuoteDetailR(body);
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+        logger.info(`${JSON.stringify(result)}`);
 
-        const code = parseInt(result.recordsets[0][0].COD);
-        const message = result.recordsets[1][0].MSG;
-        const id_quote_detail = result.recordsets[2][0].id_cotdetalle;
-
-        logger.info(`${new Date().toString()} Result createQuoteDetail - id_quote_detail: ${id_quote_detail}`);
-
-        response.status(code).json({
-            message,
-            id_quote_detail
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
+            id_quote_detail: result.id_cotdetalle
         });
 
-    })
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    };
+};
 
-}
+module.exports.updateQuoteDetail = async (request, response) => {
 
-module.exports.updateQuoteDetail = (request, response) => {
+    const user = request.usuario;
+    const body = request.body;
+    body.id_usuario = user.id_usuario;
+    logger.info(`Entry updateQuoteDetail with: ${JSON.stringify({ body, user })})}`);
 
-    const bd = request.body;
+    const attNumber = ['id_cotdetalle', 'cantidad', 'largoCM', 'anchoCM', 'altoCM', 'peso_kg', 'id_usuario'];
+    try {
+        for (let key in body) {
+            const status = body[key] === null || body[key] === undefined;
+            if (status) throw new AppError(`${key} no puede ser nulo`, 422);
+            if (!status && typeof status === 'string' && body[key].trim() === '') throw new AppError(`${key} no puede estar vacío`, 422);
+            if (!status && attNumber.includes(key) && typeof body[key] != 'number') throw new AppError(`${key} debe ser un numero`, 422);
+        };
 
-    logger.info(`${new Date().toString()} Entry updateQuoteDetail body: ${bd}`);
+        const result = await operations.updateQuoteDetailR(body);
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+        logger.info(`${JSON.stringify(result)}`);
 
-    operations.updateQuoteDetail(bd).then((result) => {
-
-        const code = parseInt(result.recordsets[0][0].COD);
-        const message = result.recordsets[1][0].MSG;
-        const data = JSON.stringify(result.recordsets[2][0]);
-
-        logger.info(`${new Date().toString()} Result updateQuoteDetail - result: ${data}`);
-
-        response.status(code).json({
-            message,
-            data
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
+            data: result.data
         });
 
-    })
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    };
+};
 
-}
+module.exports.deleteQuoteDetail = async(request, response) => {
 
-module.exports.deleteQuoteDetail = (request, response) => {
+    const id = parseInt(request.params.id);
+    logger.info(`Entry deleteQuoteDetail id: ${id}`);
 
-    const id = request.params.id;
-    logger.info(`${new Date().toString()} Entry deleteQuoteDetail id: ${id}`);
+    try {
 
-    operations.deleteQuoteDetail(id).then((result) => {
+        const result = await operations.deleteQuoteDetail(id);
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+        logger.info(`${JSON.stringify(result)}`);
 
-        const code = 200;
-        const message = "ID BORRADO";
-
-        logger.info(`${new Date().toString()} Result deleteQuoteDetail - code: ${code}`);
-        response.status(code).json({
-            message
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc           
         });
 
-    })
-
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    };
 }
 
-module.exports.generateQuote = (request, response) => {
+module.exports.generateQuote = async (request, response) => {
 
-    const bd = request.body;
+    const user = request.usuario;
+    const body = request.body;
+    body.id_usuario = user.id_usuario;
+    logger.info(`Entry generateQuote with: ${JSON.stringify({ body, user })})}`);
 
-    logger.info(`${new Date().toString()} Entry generateQuote body: ${bd}`);
+    const attNumber = ['id_cotdetalle', 'id_detalle', 'id_usuario'];
+    
+    try {
+        for (let key in body) {
+            const status = body[key] === null || body[key] === undefined;
+            if (status) throw new AppError(`${key} no puede ser nulo`, 422);
+            if (!status && typeof status === 'string' && body[key].trim() === '') throw new AppError(`${key} no puede estar vacío`, 422);
+            if (!status && attNumber.includes(key) && typeof body[key] != 'number') throw new AppError(`${key} debe ser un numero`, 422);
+        };
 
-    operations.generateQuote(bd).then((result) => {
+        const result = await operations.generateQuoteR(body);
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+        logger.info(`${JSON.stringify(result)}`);
 
-        const code = parseInt(result.recordsets[0][0].COD);
-        const message = result.recordsets[1][0].MSG;
-        const quote_detail = result.recordsets[2][0];
+        const quote_detail = result.quote_detail;
 
-        logger.info(`${new Date().toString()} Result generateQuote - quote_detail: ${quote_detail}`);
-
-        response.status(code).json({
-            message,
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
             quote_detail
         });
 
-
-    })
-
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    };
 }
 
-module.exports.getQuotes = (request, response) => {
+module.exports.getQuotes = async (request, response) => {
 
     const idquote = parseInt(request.params.idquote);
+    logger.info(`Entry getQuotes idquote: ${idquote}`);
 
-    logger.info(`${new Date().toString()} Entry getQuotes idquote: ${idquote}`);
+    try {
 
-    operations.getQuotes(idquote).then((result) => {
-
-        const message = 'GET LISTA COTIZACIONES';
-        const list = result.recordsets[0];
-        const total = result.recordsets[1][0].TOTAL;
-
-        logger.info(`${new Date().toString()} Result getQuotes - list: ${list}- total: ${total}`);
-
-        response.status(200).json({
-            message,
-            list,
-            total
+        const result = await operations.getQuotesR(idquote);
+        if (result.status_code != 200) {
+            throw new AppError(result.status_desc, result.status_code);
+        };
+        
+        logger.info(`${JSON.stringify(result)}`);
+    
+        const valor_total = result.valor_total;
+        const data = result.data;
+        
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
+            data,
+            valor_total
         });
 
-    });
 
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    };
 };
 
-module.exports.getRef = (request, response) => {
+module.exports.getRef = async (request, response) => {
 
     const key = request.params.key;
+    logger.info(`Entry getRef key: ${key}`);
 
-    logger.info(`${new Date().toString()} Entry getRef key: ${key}`);
+    try { 
 
-    operations.getRef(key).then((result) => {
-        const message = 'GET LISTA REFERENCIAS';
-        const list = result.recordsets[0];
-        logger.info(`${new Date().toString()} Result getRef - ${list}`);
-        response.status(200).json({
-            message,
-            list
+        const result = await operations.getRefr(key);
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+        logger.info(`${JSON.stringify(result)}`);
+
+        const TotalRegistros = result.TotalRegistros;
+        const data = result.data;
+
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
+            TotalRegistros,
+            data
         });
-    })
 
-
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    };
 };
 
+module.exports.closerQuote = async (request, response) => {
 
-module.exports.closerQuote = (request, response) => {
+    const body = request.body;
+    logger.info(`Entry closerQuote body: ${JSON.stringify(body)}`);
+    const attNumber = ['id_cotizacion'];
 
-    const bd = request.body;
-    logger.info(`${new Date().toString()} Entry closerQuote bdy: ${bd}`);
+    try {
 
-    operations.closerQuote(bd).then((result) => {
+        for (let key in body) {
+            const status = body[key] === null || body[key] === undefined;
+            if (status) throw new AppError(`${key} no puede ser nulo`, 422);
+            if (!status && typeof status === 'string' && body[key].trim() === '') throw new AppError(`${key} no puede estar vacío`, 422);
+            if (!status && attNumber.includes(key) && typeof body[key] != 'number') throw new AppError(`${key} debe ser un numero`, 422);
+        };
 
-        console.log({ result });
+        const result = await operations.closerQuoteR(body);
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+        
+        logger.info(`${JSON.stringify(result)}`);
 
-        const code = parseInt(result.recordsets[0][0].COD);
-        const message = result.recordsets[1][0].MSG;
-        const rows = JSON.stringify(result.recordsets[2]);
-        const total = result.recordsets[3][0].TOTAL;
+        const rows = result.rows;
+        const total = result.valor_total;
 
-        logger.info(`${new Date().toString()} Result closerQuote - rows: ${rows} - total: ${total}`);
-
-        response.status(code).json({
-            message,
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
             rows,
             total
         });
 
-
-    })
-
-}
-
-module.exports.closeQuoteRows = (request, response) => {
-
-    const bd = request.body;
-    logger.info(`${new Date().toString()} Entry closeQuoteRows body: ${bd}`);
-
-    operations.closeQuoteRows(bd).then((result) => {
-
-        if (result === null) {
-
-            response.status(200).json({
-                message: null,
-                rows: null
-            });
-
-            return
-
-        };
-        const code = parseInt(result.recordsets[0][0].COD);
-        const message = result.recordsets[1][0].MSG;
-        const rows = JSON.stringify(result.recordsets[2]);
-
-        logger.info(`${new Date().toString()} Result closeQuoteRows - rows: ${rows}`);
-
-        response.status(code).json({
-            message,
-            rows
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
         });
-
-
-    })
-
+    };
 }
 
-module.exports.getTotalDto = (request, response) => {
+module.exports.getTotalDto = async(request, response) => {
 
     const idquote = parseInt(request.params.idquote);
-    logger.info(`${new Date().toString()} Entry getTotalDto idquote: ${idquote}`);
+    logger.info(`Entry getTotalDto idquote: ${idquote}`);
 
-    operations.getTotalDto(idquote).then((result) => {
-        console.log(result);
+    try {
 
-        const totalDto = result.recordset;
-        const message = 'GET TOTAL CON DESCUENTO';
+        const result = await operations.getTotalDtoR(idquote);
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
 
-        logger.info(`${new Date().toString()} Result getTotalDto - totalDto ${totalDto}`);
+        logger.info(`${JSON.stringify(result)}`);
 
-        response.status(200).json({
-            message,
+        const totalDto = result.totalDto;
+        const TotalRegistros = result.TotalRegistros;
+
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
+            TotalRegistros,
             totalDto
-
         });
 
-
-    })
-
-
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    };
 };
 
-module.exports.Cpeso = (request, response) => {
+module.exports.Cpeso = async (request, response) => {
 
-    const bd = request.body;
-    logger.info(`${new Date().toString()} Entry Cpeso body: ${bd}`);
+    const body = request.body;
+    logger.info(`Entry Cpeso body: ${JSON.stringify(body)}`);
+    const attNumber = ['id_detalle', 'cantidad', 'peso_kg', 'largoCM', 'anchoCM', 'altoCM'];
 
-    operations.Cpeso(bd).then((result) => {
+    try {
 
-        const code = parseInt(result.recordsets[0][0].COD);
-        const message = result.recordsets[1][0].MSG;
+        for (let key in body) {
+            const status = body[key] === null || body[key] === undefined;
+            if (status) throw new AppError(`${key} no puede ser nulo`, 422);
+            if (!status && typeof status === 'string' && body[key].trim() === '') throw new AppError(`${key} no puede estar vacío`, 422);
+            if (!status && attNumber.includes(key) && typeof body[key] != 'number') throw new AppError(`${key} debe ser un numero`, 422);
+        };
 
-        logger.info(`${new Date().toString()} Result Cpeso - code :${code}- message: ${message}`);
+        const result = await operations.CpesoR(body);
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
 
-        response.status(code).json({
-            code,
-            message
+        logger.info(`${JSON.stringify(result)}`);
+
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc
+         });
+
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
         });
-
-    })
-
-};
-
-module.exports.getSellers = (request, response) => {
-
-    logger.info(`${new Date().toString()} Entry getSellers`);
-
-    operations.getSellers().then((result) => {
-
-        const message = 'GET LISTA VENDEDORES';
-        const list = result.recordsets[0];
-
-        logger.info(`${new Date().toString()} Result getSellers - list: ${list}`);
-
-        response.status(200).json({
-            message,
-            list
-        });
-
-    })
-
+    };
 };
 
 module.exports.getCustomers = (request, response) => {

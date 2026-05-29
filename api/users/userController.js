@@ -58,54 +58,6 @@ module.exports.getUsersPag = async (request, response) => {
 
 };
 
-module.exports.getUsers = (request, response) => {
-
-    const estado = parseInt(request.params.estado);
-
-    logger.info(`${new Date().toString()} Entry getUsers estado:${estado}`);
-
-    operations.getUsers(estado).then((result) => {
-
-        const code = 200;
-        const estados = estado == 1 ? 'ACTIVOS' : 'INACTIVOS';
-        const message = `GET USUARIOS ${estados}`;
-        const usuarios = result.recordsets;
-
-        logger.info(`${new Date().toString()} Result getUsers - ${usuarios}`);
-
-        response.status(code).json({
-            message,
-            usuarios
-        });
-    })
-
-};
-
-module.exports.getIdUsers = (request, response) => {
-
-    const identificacion = parseInt(request.params.identificacion);
-
-    logger.info(`${new Date().toString()} Entry getIdUsers ${identificacion}`);
-
-
-    operations.getIdUsers(identificacion).then((result) => {
-
-        const code = 200;
-        const message = `GET USUARIO`;
-        const usuario = result.recordsets;
-
-        logger.info(`${new Date().toString()} Result getIdUsers ${usuario}`);
-        response.status(code).json({
-            message,
-            usuario
-        });
-
-
-
-    })
-
-};
-
 module.exports.postUser = async (request, response) => {
     
     try {

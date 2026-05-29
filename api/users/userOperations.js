@@ -116,25 +116,6 @@ operations.getUsersPag = async (bd) => {
     }
 }
 
-operations.getUsers = async(estado) => {
-
-    const sql = `SELECT * FROM USUARIOS WHERE ESTADO = ${estado}`;
-
-    return databaseFuncs.executeQuery(sql, 'getUsers').then(result => {
-        return result
-    });
-}
-
-operations.getIdUsers = async(identificacion) => {
-
-    const sql = `SELECT * FROM USUARIOS WHERE identificacion = ${identificacion}`;
-
-    return databaseFuncs.executeQuery(sql, 'getIdUsers').then(result => {
-        return result
-    });
-
-}
-
 operations.updateUserR = async (identificacion, bd) => {
     try {
         const result = await databaseFuncs.executeStoredProcedure(
