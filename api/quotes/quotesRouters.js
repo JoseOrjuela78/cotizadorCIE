@@ -34,7 +34,7 @@ router.get('/api/quote-totaldto/:idquote', [verificaToken], quotesController.get
 router.get('/api/quote-detail/:idquote', [verificaToken], quotesController.getQuoteDetail);
 router.get('/api/quotes/:cl/:id', [verificaToken], quotesController.getidQuotes);
 router.get('/api/brands', [verificaToken], quotesController.getBrands);
-router.get('/api/customers/:id', [verificaToken], quotesController.getCustomers);
+
 
 
 

@@ -344,26 +344,6 @@ module.exports.Cpeso = async (request, response) => {
     };
 };
 
-module.exports.getCustomers = (request, response) => {
-    const idUsuario = request.params.id;
-    logger.info(`${new Date().toString()} Entry getCustomers idUsuario: ${idUsuario}`);
-
-    operations.getCustomers(idUsuario).then((result) => {
-
-        const message = 'GET LISTA CLIENTES';
-        const list = result.recordsets[0];
-
-        logger.info(`${new Date().toString()} Result getCustomers - ${list}`);
-
-        response.status(200).json({
-            message,
-            list
-        });
-
-    })
-
-};
-
 module.exports.getidQuotes = (request, response) => {
 
     const cliente = request.params.cl;

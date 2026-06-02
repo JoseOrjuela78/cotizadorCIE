@@ -320,17 +320,6 @@ operations.CpesoR = async (bd) => {
     }
 }
 
-operations.getCustomers = async(idUsuario) => {
-
-    const sql = `select DISTINCT (CLIENTE) from Cotizaciones WHERE id_usuario = ${idUsuario} ORDER BY CLIENTE;`;
-
-    return databaseFuncs.executeQuery(sql, 'getCustomers').then(result => {
-        return result
-    });
-
-
-}
-
 operations.getidQuotes = async(cliente, idUsuario) => {
 
     const sql = `SELECT DISTINCT(c.id_cotizacion) as id_cotizacion FROM Cotizaciones c INNER JOIN Cotizacionesdetalle cd ON c.id_cotizacion = cd.id_cotizacion INNER JOIN CotizacionesTotales ct ON ct.id_cotizacion = c.id_cotizacion WHERE UPPER(c.cliente) = UPPER('${cliente}') AND c.id_usuario = ${idUsuario} ORDER BY c.id_cotizacion DESC;`;
