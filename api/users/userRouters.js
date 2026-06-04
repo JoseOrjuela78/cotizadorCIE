@@ -9,4 +9,6 @@ router.post('/api/usuarios/login', userController.login);
 router.put('/api/usuarios/:id', [verificaToken], userController.updateUser);
 router.put('/api/usuarios/get-pag', [verificaToken], userController.getUsersPag);
 
+router.get('/api/rol/schema/:idRol', [verificaToken], userController.getRolSchema);
+
 module.exports = router;

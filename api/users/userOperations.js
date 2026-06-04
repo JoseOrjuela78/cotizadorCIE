@@ -121,15 +121,15 @@ operations.updateUserR = async (identificacion, bd) => {
         const result = await databaseFuncs.executeStoredProcedure(
             'PR_UPDATE_USUARIO_R',
             {
-              identificacion: { type: sql.VarChar, value: identificacion },
-              nombre: { type: sql.VarChar, value: bd.nombre },
-              apellido: { type: sql.VarChar, value: bd.apellido },
-              telefono: { type: sql.VarChar, value: bd.telefono },
-              celular: { type: sql.VarChar, value: bd.celular },
-              email: { type: sql.VarChar, value: bd.email },
-              pass: { type: sql.VarChar, value: bd.pass },
-              rol: { type: sql.Int, value: bd.rol },
-              estado: { type: sql.Bit, value: bd.estado }
+                identificacion: { type: sql.VarChar, value: identificacion },
+                nombre: { type: sql.VarChar, value: bd.nombre },
+                apellido: { type: sql.VarChar, value: bd.apellido },
+                telefono: { type: sql.VarChar, value: bd.telefono },
+                celular: { type: sql.VarChar, value: bd.celular },
+                email: { type: sql.VarChar, value: bd.email },
+                pass: { type: sql.VarChar, value: bd.pass },
+                rol: { type: sql.Int, value: bd.rol },
+                estado: { type: sql.Bit, value: bd.estado }
             },
             {
                 status_code: sql.Int,
@@ -150,6 +150,95 @@ operations.updateUserR = async (identificacion, bd) => {
             status_desc: error.message
         };
     }
-}
+};
+
+operations.getListaDetalle = async (codigoLista) => {
+    try {
+        const result = await databaseFuncs.executeStoredProcedure(
+            'SP_GET_LISTA_DETALLE',
+            {
+                CODIGO_LISTA: { type: sql.Int, value: codigoLista }
+            },
+            {
+                status_code: sql.Int,
+                status_desc: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
+        );
+       
+        const lista = result.recordset;
+        return {
+            status_code: result.output.status_code,
+            status_desc: result.output.status_desc,
+            lista
+        };
+        
+    } catch (error) {
+        return {
+            user: null,
+            status_code: error.code || 500,
+            status_desc: error.message
+        };
+    };
+};
+
+operations.getListaMenus = async () => {
+    try {
+        const result = await databaseFuncs.executeStoredProcedure(
+            'SP_GET_LISTA_MENUS',
+            {},
+            {
+                status_code: sql.Int,
+                status_desc: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
+        );
+
+        const lista = result.recordset;
+        return {
+            status_code: result.output.status_code,
+            status_desc: result.output.status_desc,
+            lista
+        };
+
+    } catch (error) {
+        return {
+            user: null,
+            status_code: error.code || 500,
+            status_desc: error.message
+        };
+    };
+};
+
+operations.getPermisosRol = async (idRol) => {
+    try {
+        const result = await databaseFuncs.executeStoredProcedure(
+            'SP_GET_PERMISOS_ROL',
+            {
+                id_rol: { type: sql.Int, value: idRol }
+            },
+            {
+                status_code: sql.Int,
+                status_desc: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
+        );
+
+        const lista = result.recordset;
+        return {
+            status_code: result.output.status_code,
+            status_desc: result.output.status_desc,
+            lista
+        };
+
+    } catch (error) {
+        return {
+            user: null,
+            status_code: error.code || 500,
+            status_desc: error.message
+        };
+    };
+};
+
 
 module.exports = operations;

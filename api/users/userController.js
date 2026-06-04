@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const logger = require('../common/logger');
 const AppError = require('../common/appError');
 const operations = require('./userOperations');
+const utils = require('../common/utils');
 
 
 module.exports.getUsersPag = async (request, response) => {
@@ -172,6 +173,77 @@ module.exports.updateUser = async (request, response) => {
             user
         });
 
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    }
+
+};
+
+module.exports.getRolSchema = async (request, response) => {
+
+    try {
+        const idRol = request. params.idRol || '0';
+        const codigo_lista = 4;//Lista de acciones
+        
+        logger.info(`Entry getRolMenus get lista : ${codigo_lista}`);
+
+        const result1 = await operations.getListaDetalle(codigo_lista);
+                  
+        if (result1.status_code != 200) throw new AppError(result1.status_desc, result1.status_code);
+
+        logger.info(`${JSON.stringify({ status_code: result1.status_code, status_desc: result1.status_desc, result1 })}`);
+
+        const result2 = await operations.getListaMenus();
+
+        if (result2.status_code != 200) throw new AppError(result2.status_desc, result2.status_code);
+
+        logger.info(`${JSON.stringify({ status_code: result2.status_code, status_desc: result2.status_desc, result2 })}`);
+
+        const rolSchema = await utils.createRolSchema(idRol, result1.lista, result2.lista);
+
+        if (idRol != null && idRol != 0) {
+
+            const result3 = await operations.getPermisosRol(parseInt(idRol));
+
+            if (result3.status_code != 200) throw new AppError(result3.status_desc, result3.status_code);
+
+            logger.info(`${JSON.stringify({ status_code: result3.status_code, status_desc: result3.status_desc, result3 })}`);
+
+            for (let i of result3.lista) {
+                const { ID_MENU, ID_ACCION } = i;
+                for (let e in rolSchema) { 
+                    if (rolSchema[e].idMenu === ID_MENU) { 
+                        for (let i in rolSchema[e].idAction) { 
+                            if (rolSchema[e].idAction[i].codigo === ID_ACCION) { 
+                                rolSchema[e].idAction[i].status = true;
+                            }; 
+                        };
+                    };
+                    
+                };
+                
+            };
+
+          return  response.status(result3.status_code).json({
+                                                            ok: true,
+                                                            msg: result3.status_desc,
+                                                            rolSchema
+          });
+            
+
+        };
+        
+        
+        response.status(result2.status_code).json({
+            ok: true,
+            msg: result2.status_desc,
+            rolSchema
+        });
+   
     } catch (error) {
         logger.error(`${error}`);
         response.status(error.statusCode).json({
