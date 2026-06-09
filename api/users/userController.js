@@ -66,25 +66,32 @@ module.exports.postUser = async (request, response) => {
         const bd = request.body;
 
         const salt = bcrypt.genSaltSync(10);
-        bd.password = bcrypt.hashSync(bd.pass, salt);
-        bd.nombre = String(bd.nombre).toLocaleUpperCase();
-        bd.apellido = String(bd.apellido).toLocaleUpperCase();
+        bd.pass = bcrypt.hashSync(bd.pass, salt);
+        bd.nombre1 = String(bd.nombre1).toLocaleUpperCase().trim();
+        bd.nombre2 = String(bd.nombre2).toLocaleUpperCase().trim();
+        bd.apellido1 = String(bd.apellido1).toLocaleUpperCase().trim();
+        bd.apellido2 = String(bd.apellido2).toLocaleUpperCase().trim();
+        bd.id_usuario = user.id_usuario;
 
         logger.info(`Entry postUser body: ${JSON.stringify(bd)}`);
 
+     
+        
         const result = await operations.postUserR(bd);
         
         if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
         
-        const userCreated = result.user;
-        logger.info(`${JSON.stringify({ status_code: result.status_code, status_desc: result.status_desc, user: userCreated })}`);
+        logger.info(`${JSON.stringify({ status_code: result.status_code, status_desc: result.status_desc, result })}`);
+
+        const codigo = result.codigo;
 
         response.status(result.status_code).json({
             ok: true,
             msg: result.status_desc,
-            user: userCreated
+            codigo
         });
         
+    
 
     } catch (error) {
         logger.error(`${error}`);
@@ -244,6 +251,98 @@ module.exports.getRolSchema = async (request, response) => {
             rolSchema
         });
    
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    }
+
+};
+
+module.exports.getLista = async (request, response) => {
+
+    try {
+        const idLista = request.params.idLista || '0';
+     
+
+        logger.info(`Entry getRolMenus get lista : ${idLista}`);
+
+        const result = await operations.getListaDetalle(idLista);
+
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+
+        logger.info(`${JSON.stringify({ status_code: result.status_code, status_desc: result.status_desc, result})}`);
+
+       
+        return response.status(result.status_code).json({
+                ok: true,
+                msg: result.status_desc,
+            lista: result.lista
+            });
+
+
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    }
+
+};
+
+module.exports.getCiudades = async (request, response) => {
+
+    try {
+        const codigo_pais = request.params.codPais;
+       
+        logger.info(`Entry getCiudades get lista : ${JSON.stringify({ codigo_pais})}`);
+
+        const result = await operations.getListaCiudades({ codigo_pais});
+
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+
+        logger.info(`${JSON.stringify({ status_code: result.status_code, status_desc: result.status_desc, result })}`);
+
+        return response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
+            lista: result.lista
+        });
+
+
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    }
+
+};
+
+module.exports.getRoles = async (request, response) => {
+
+    try {
+        
+
+        logger.info(`Entry getRoles activos`);
+
+        const result = await operations.getRoles();
+
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+
+        logger.info(`${JSON.stringify({ status_code: result.status_code, status_desc: result.status_desc, result })}`);
+
+        return response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
+            lista: result.lista
+        });
+
+
     } catch (error) {
         logger.error(`${error}`);
         response.status(error.statusCode).json({
