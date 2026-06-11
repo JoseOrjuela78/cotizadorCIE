@@ -221,12 +221,12 @@ module.exports.getRolSchema = async (request, response) => {
             logger.info(`${JSON.stringify({ status_code: result3.status_code, status_desc: result3.status_desc, result3 })}`);
 
             for (let i of result3.lista) {
-                const { ID_MENU, ID_ACCION } = i;
+                const { ID_MENU, ID_ACCION, ESTADO } = i;
                 for (let e in rolSchema) { 
                     if (rolSchema[e].idMenu === ID_MENU) { 
                         for (let i in rolSchema[e].idAction) { 
-                            if (rolSchema[e].idAction[i].codigo === ID_ACCION) { 
-                                rolSchema[e].idAction[i].status = true;
+                            if (rolSchema[e].idAction[i].codigo === ID_ACCION && ESTADO == 1) { 
+                                rolSchema[e].idAction[i].status = ESTADO;
                             }; 
                         };
                     };

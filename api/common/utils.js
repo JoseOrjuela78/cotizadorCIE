@@ -18,7 +18,7 @@ utils.createRolSchema = async (idRol, acciones, menus) => {
             idRol: idRol,
             titulo: Element.TITULO,
             idMenu: Element.ID_MENU,
-            idAction: acciones.map(x => ({ codigo: x.CODIGO, valor: x.VALOR , status:false}))
+            idAction: acciones.map(x => ({ codigo: x.CODIGO, valor: x.VALOR , status:0}))
         };
 
         rolSchema.push(row);
@@ -27,5 +27,15 @@ utils.createRolSchema = async (idRol, acciones, menus) => {
 
     return rolSchema;
 }
+
+utils.pathToRegex= (path, pathPequest) => {
+
+  if(path === pathPequest) return true;
+
+  const regex = new RegExp( '^' + path.replace(/:\w+/g, '[^/]+') +'$');
+  
+  return regex.test(pathPequest);
+}
+
 
 module.exports = utils;
