@@ -88,30 +88,38 @@ operations.getUsersPag = async (bd) => {
         const result = await databaseFuncs.executeStoredProcedure(
             'PR_GET_USUARIOS',
             {
-                OrderColumn: { type: sql.VarChar, value: bd.OrderColumn },
-                OrderDirection: { type: sql.VarChar, value: bd.OrderDirection },
-                PageNumber: { type: sql.Int, value: bd.PageNumber },
-                PageSize: { type: sql.Int, value: bd.PageSize },
-                identificacion: { type: sql.VarChar, value: bd.identificacion },
-                username: { type: sql.VarChar, value: bd.username },
-                nombres: { type: sql.VarChar, value: bd.nombres },
-                rol: { type: sql.Int, value: bd.rol },
-                estado: { type: sql.Int, value: bd.estado },
-                FechaInicio: { type: sql.VarChar, value: bd.FechaInicio },
-                FechaFinal: { type: sql.VarChar, value: bd.FechaFinal }
+                ORDERCOLUMN: { type: sql.VarChar, value: bd.ordercolumn },
+                ORDERDIRECTION: { type: sql.VarChar, value: bd.orderdirection },
+                PAGENUMBER: { type: sql.Int, value: bd.pagenumber },
+                PAGESIZE: { type: sql.Int, value: bd.pagesize },
+                IDENTIFICACION: { type: sql.VarChar, value: bd.identificacion },
+                ID_USUARIO: { type: sql.Int, value: bd.id_usuario },
+                TIPO_PERSONA: { type: sql.Int, value: bd.tipo_persona },
+                TIPO_IDENTIFICACION: { type: sql.Int, value: bd.tipo_identificacion },
+                RAZON_SOCIAL: { type: sql.VarChar, value: bd.razon_social },
+                NOMBRE: { type: sql.VarChar, value: bd.nombre },
+                EMAIL: { type: sql.VarChar, value: bd.email },
+                GENERO: { type: sql.Int, value: bd.genero },
+                CIUDAD: { type: sql.Int, value: bd.ciudad },
+                TELEFONO: { type: sql.VarChar, value: bd.telefono },
+                ID_ROL: { type: sql.Int, value: bd.id_rol },
+                ESTADO: { type: sql.Int, value: bd.estado },
+                FECHAINICIO: { type: sql.VarChar, value: bd.fechainicio },
+                FECHAFINAL: { type: sql.VarChar, value: bd.fechafinal }
             },
             {
-                TotalRegistros: sql.Int,
-                status_code: sql.Int,
-                status_desc: sql.VarChar(500)
-            }
+                TOTALREGISTROS: sql.Int,
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
         );
       
-        const users = result.recordset;
+        const users = result.recordset[0];
         return {
-            status_code: result.output.status_code,
-            status_desc: result.output.status_desc,
-            totalRegistros: result.output.TotalRegistros,
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC,
+            totalRegistros: result.output.TOTALREGISTROS,
             users
         };
 
@@ -124,36 +132,74 @@ operations.getUsersPag = async (bd) => {
     }
 }
 
-operations.updateUserR = async (identificacion, bd) => {
+operations.updateUserR = async (bd) => {
+
     try {
         const result = await databaseFuncs.executeStoredProcedure(
-            'PR_UPDATE_USUARIO_R',
+            'SP_ACTUALIZAR_USUARIO',
             {
-                identificacion: { type: sql.VarChar, value: identificacion },
-                nombre: { type: sql.VarChar, value: bd.nombre },
-                apellido: { type: sql.VarChar, value: bd.apellido },
-                telefono: { type: sql.VarChar, value: bd.telefono },
-                celular: { type: sql.VarChar, value: bd.celular },
-                email: { type: sql.VarChar, value: bd.email },
-                pass: { type: sql.VarChar, value: bd.pass },
-                rol: { type: sql.Int, value: bd.rol },
-                estado: { type: sql.Bit, value: bd.estado }
+                TIPO_PERSONA: { type: sql.Int, value: bd.tipo_persona },
+                TIPO_IDENTIFICACION: { type: sql.Int, value: bd.tipo_identificacion },
+                IDENTIFICACION: { type: sql.VarChar, value: bd.identificacion },
+                RAZON_SOCIAL: { type: sql.VarChar, value: bd.razon_social },
+                NOMBRE1: { type: sql.VarChar, value: bd.nombre1 },
+                NOMBRE2: { type: sql.VarChar, value: bd.nombre2 },
+                APELLIDO1: { type: sql.VarChar, value: bd.apellido1 },
+                APELLIDO2: { type: sql.VarChar, value: bd.apellido2 },
+                EMAIL: { type: sql.VarChar, value: bd.email },
+                GENERO: { type: sql.Int, value: bd.genero },
+                CIUDAD: { type: sql.Int, value: bd.ciudad },
+                TELEFONO: { type: sql.VarChar, value: bd.telefono },
+                ID_ROL: { type: sql.Int, value: bd.id_rol },
+                ID_USUARIO: { type: sql.Int, value: bd.id_usuario }
             },
             {
-                status_code: sql.Int,
-                status_desc: sql.VarChar(500)
-            }
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
         );
         const user = result.recordsets[0][0];
         return {
             user,
-            status_code: result.output.status_code,
-            status_desc: result.output.status_desc
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC
         };
 
     } catch (error) {
         return {
             user: null,
+            status_code: error.code || 500,
+            status_desc: error.message
+        };
+    }
+};
+
+operations.updateStatusUserR = async (bd) => {
+
+    try {
+        const result = await databaseFuncs.executeStoredProcedure(
+            'SP_ESTADO_USUARIO',
+            {
+                
+                IDENTIFICACION: { type: sql.VarChar, value: bd.identificacion },
+                ESTADO: { type: sql.Int, value: bd.estado },
+                ID_USUARIO: { type: sql.Int, value: bd.id_usuario }
+            },
+            {
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
+        );
+    
+        return {
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC
+        };
+
+    } catch (error) {
+        return {
             status_code: error.code || 500,
             status_desc: error.message
         };
@@ -196,22 +242,113 @@ operations.getListaMenus = async () => {
             'SP_GET_LISTA_MENUS',
             {},
             {
-                status_code: sql.Int,
-                status_desc: sql.VarChar(500)
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
             },
             'MOD_SEGURIDAD'
         );
 
         const lista = result.recordset;
         return {
-            status_code: result.output.status_code,
-            status_desc: result.output.status_desc,
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC,
             lista
         };
 
     } catch (error) {
         return {
+            status_code: error.code || 500,
+            status_desc: error.message
+        };
+    };
+};
+
+operations.createPermisosRol = async (permisos, idusuario) => {
+    try {
+        const result = await databaseFuncs.executeStoredProcedure(
+            'SP_CREAR_PERMISOS',
+            {
+                PERMISOS: { type: sql.VarChar, value: permisos },
+                ID_USUARIO: { type: sql.Int, value: idusuario }
+            },
+            {
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
+        );
+
+        
+        return {
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC
+        };
+
+    } catch (error) {
+        return {
             user: null,
+            status_code: error.code || 500,
+            status_desc: error.message
+        };
+    };
+};
+
+operations.createRol = async (bd) => {
+    try {
+        const result = await databaseFuncs.executeStoredProcedure(
+            'SP_CREAR_ROL',
+            {
+                NOMBRE_ROL: { type: sql.VarChar, value: bd.nombre_rol },
+                DESCRIPCION: { type: sql.VarChar, value: bd.descripcion },
+                ID_USUARIO: { type: sql.Int, value: bd.id_usuario}
+            },
+            {
+                CODIGO: sql.Int,
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
+        );
+
+
+        return {
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC,
+            id_rol: result.output.CODIGO
+        };
+
+    } catch (error) {
+        return {
+            status_code: error.code || 500,
+            status_desc: error.message
+        };
+    };
+};
+
+operations.updateStatusRol = async (bd) => {
+    try {
+        const result = await databaseFuncs.executeStoredProcedure(
+            'SP_ESTADO_ROL',
+            {
+                ID_ROL: { type: sql.Int, value: bd.id_rol },
+                ESTADO: { type: sql.Int, value: bd.estado },
+                ID_USUARIO: { type: sql.Int, value: bd.id_usuario }
+            },
+            {
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
+        );
+
+
+        return {
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC
+        };
+
+    } catch (error) {
+        return {
             status_code: error.code || 500,
             status_desc: error.message
         };
@@ -277,22 +414,35 @@ operations.getListaCiudades = async (bd) => {
     };
 };
 
-operations.getRoles = async () => {
+operations.getRoles = async (bd) => {
     try {
         const result = await databaseFuncs.executeStoredProcedure(
             'SP_GET_ROLES',
-            {},
             {
-                status_code: sql.Int,
-                status_desc: sql.VarChar(500)
+                ORDERCOLUMN: { type: sql.VarChar, value: bd.ordercolumn },
+                ORDERDIRECTION: { type: sql.VarChar, value: bd.orderdirection },
+                PAGENUMBER: { type: sql.Int, value: bd.pagenumber },
+                PAGESIZE: { type: sql.Int, value: bd.pagesize },
+                ID_ROL: { type: sql.Int, value: bd.id_rol },
+                NOMBRE_ROL: { type: sql.VarChar, value: bd.nombre_rol },
+                DESCRIPCION: { type: sql.VarChar, value: bd.descripcion },
+                ESTADO: { type: sql.Int, value: bd.estado },
+                FECHAINICIO: { type: sql.VarChar, value: bd.fechainicio },
+                FECHAFINAL: { type: sql.VarChar, value: bd.fechafinal }
+            },
+            {
+                TOTALREGISTROS: sql.Int,
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
             },
             'MOD_SEGURIDAD'
         );
 
-        const lista = result.recordset;
+        const lista = result.recordsets[0];
         return {
-            status_code: result.output.status_code,
-            status_desc: result.output.status_desc,
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC,
+            totalRegistros: result.output.TOTALREGISTROS,
             lista
         };
 

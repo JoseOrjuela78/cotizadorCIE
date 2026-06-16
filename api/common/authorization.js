@@ -14,9 +14,9 @@ const verificaToken = (request, response, next) => {
         return response.status(422).json({ error: 'Token no proporcionado o inválido' });
     };
 
-    if (!verificaPermits(request)){
-      return response.status(422).json({ error: 'privilegios insufientes' });
-    };
+    //if (!verificaPermits(request)){
+    //  return response.status(422).json({ error: 'privilegios insufientes' });
+    //};
     // Extraemos el token
     const token = authHeader.split(' ')[1];
 
