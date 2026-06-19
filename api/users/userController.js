@@ -125,24 +125,74 @@ module.exports.login = async (request, response) => {
 
         const pass = result.pass;
 
-        if (!bcrypt.compareSync(bd.pass, pass)) throw new AppError(422, 'Credenciales incorrectas');
-
+        if (!bcrypt.compareSync(bd.pass, pass)) throw new AppError('Credenciales incorrectas',403);
 
         const token = jwt.sign({ usuario: result.user }, process.env.JWT_KEY, { expiresIn: '8h' });
-        const user = result.user;
 
+        const menus = result.menus;
+
+        if (menus.length <= 0) throw new AppError('Usuario sin permisos', 403);
+
+        const MenusPadre = [];
+        const MenusHijo = [];
+
+        for (let menu of menus) {
+            if (menu.TIPO === 'link') {
+                menu.subMenus = [];
+                MenusPadre.push(menu)
+            };
+            if (menu.TIPO === 'sub') MenusHijo.push(menu);
+        };
+
+        if (MenusHijo.length > 0) {
+            for (let menuPadre of MenusPadre) {
+                for (let menuHijo of MenusHijo) {
+                    if (menuHijo.DEPENDE === menuPadre.ID_MENU) {
+                        menuPadre.subMenus.push(menuHijo);
+                    };
+                };
+            };
+        };   
+        
+        const user = result.user;
+        const currentDate   = new Date(); 
+        const updateDate    = new Date(user.FECHA_ACTUALIZACION);
+
+        let changePass = 0;
+        
+        if (!updateDate) {
+            changePass = 1; 
+                
+        } else {
+
+            const diferenciaMs = currentDate - updateDate;
+            const diferenciaDias = Math.floor(diferenciaMs / (1000 * 60 * 60 * 24));
+            if (diferenciaDias >= 30) changePass = 1;
+
+        };
+
+        if (!user.ID_USUARIO_EJECUTO) {
+            changePass = 1; 
+        } else {
+            if (user.ID_USUARIO_EJECUTO != user.ID_USUARIO) changePass = 1; 
+        };
+        
         logger.info(`Login exitoso: ${JSON.stringify({
             ok: true,
             msg: result.status_desc,
             token,
-            user
+            user, 
+            changePass,
+            menus: MenusPadre
         })}`);
 
         response.status(result.status_code).json({
             ok: true,
             msg: result.status_desc,
             token,
-            user
+            user,
+            changePass,
+            menus: MenusPadre
         });
         
     } catch (error) {
@@ -197,6 +247,40 @@ module.exports.updateStatusUser = async (request, response) => {
         logger.info(`Entry updateStatusUser body: ${JSON.stringify(bd)}`);
 
         const result = await operations.updateStatusUserR(bd);
+
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+
+        logger.info(`${JSON.stringify({ status_code: result.status_code, status_desc: result.status_desc, result })}`);
+
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc
+        });
+
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    }
+
+};
+
+module.exports.updatePassword = async (request, response) => {
+
+    try {
+        const bd = request.body;
+        bd.id_usuario_ejecuto = request.usuario.ID_USUARIO;
+
+        logger.info(`Entry updatePassword body: ${JSON.stringify(bd)}`);
+
+        if (bd.pass) {
+            const salt = bcrypt.genSaltSync(10);
+            bd.pass = bcrypt.hashSync(bd.pass, salt);
+        };
+
+        const result = await operations.updatePass(bd);
 
         if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
 

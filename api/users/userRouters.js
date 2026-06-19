@@ -13,6 +13,7 @@ router.post('/api/usuarios', [verificaToken], userController.postUser);
 router.put('/api/usuarios', [verificaToken], userController.updateUser);
 router.put('/api/usuarios/status', [verificaToken], userController.updateStatusUser);
 router.put('/api/usuarios/get-pag', [verificaToken], userController.getUsersPag);
+router.post('/api/usuarios/update-pass', [verificaToken], userController.updatePassword);
 
 //LISTAS
 router.get('/api/listas/:idLista', [verificaToken], userController.getLista);

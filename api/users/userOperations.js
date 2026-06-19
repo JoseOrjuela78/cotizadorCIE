@@ -18,18 +18,19 @@ operations.loginR = async (bd) => {
             },
             'MOD_SEGURIDAD'
         );
+        
         const user = result.recordsets[0][0];
+        const menus = result.recordsets[1];
         return {
             pass: result.output.pass,
             user,
+            menus,
             status_code: result.output.status_code,
             status_desc: result.output.status_desc
         };
         
     } catch (error) {
         return {
-            pass: null,
-            user: null,
             status_code: error.code || 500,
             status_desc: error.message,
         };
@@ -169,6 +170,36 @@ operations.updateUserR = async (bd) => {
     } catch (error) {
         return {
             user: null,
+            status_code: error.code || 500,
+            status_desc: error.message
+        };
+    }
+};
+
+operations.updatePass = async (bd) => {
+
+    try {
+        const result = await databaseFuncs.executeStoredProcedure(
+            'SP_ACTUALIZAR_PASSWORD',
+            {
+                ID_USUARIO: { type: sql.Int, value: bd.id_usuario },
+                PASS: { type: sql.VarChar, value: bd.pass },
+                ID_USUARIO_EJECUTO: { type: sql.Int, value: bd.id_usuario_ejecuto }
+            },
+            {
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
+        );
+        
+        return {
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC
+        };
+
+    } catch (error) {
+        return {
             status_code: error.code || 500,
             status_desc: error.message
         };

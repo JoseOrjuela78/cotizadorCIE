@@ -29,11 +29,14 @@ router.put('/api/quote-generate', [verificaToken], quotesController.generateQuot
 router.get('/api/quote-get/:idquote', [verificaToken], quotesController.getQuotes);
 router.get('/api/refs-get/:key', [verificaToken], quotesController.getRef);
 router.post('/api/quote-close', [verificaToken], quotesController.closerQuote);
+router.put('/api/quote-close-row', [verificaToken], quotesController.closeQuoteRows);
 router.put('/api/quote-cpeso', [verificaToken], quotesController.Cpeso);
 router.get('/api/quote-totaldto/:idquote', [verificaToken], quotesController.getTotalDto);
 router.get('/api/quote-detail/:idquote', [verificaToken], quotesController.getQuoteDetail);
 router.get('/api/quotes/:cl/:id', [verificaToken], quotesController.getidQuotes);
 router.get('/api/brands', [verificaToken], quotesController.getBrands);
+router.get('/api/sellers', [verificaToken], quotesController.getSellers);
+router.get('/api/customers/:id', [verificaToken], quotesController.getCustomers);
 
 
 
