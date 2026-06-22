@@ -27,4 +27,12 @@ router.post('/api/create-permits-rol', [verificaToken], userController.createPer
 router.post('/api/create-rol', [verificaToken], userController.createRol);
 router.put('/api/rol/status', [verificaToken], userController.updateStatusRol);
 
+//RESTRICCIONES
+
+router.post('/api/create-restriction', [verificaToken], userController.createRestriction);
+router.put('/api/delete-restriction', [verificaToken], userController.deleteRestriction);
+router.put('/api/get-users-restricted', [verificaToken], userController.getUsersRestricted);
+
+
+
 module.exports = router;

@@ -177,13 +177,15 @@ module.exports.login = async (request, response) => {
             if (user.ID_USUARIO_EJECUTO != user.ID_USUARIO) changePass = 1; 
         };
         
+        const restricciones = result.restricciones;
         logger.info(`Login exitoso: ${JSON.stringify({
             ok: true,
             msg: result.status_desc,
             token,
             user, 
             changePass,
-            menus: MenusPadre
+            menus: MenusPadre,
+            restricciones
         })}`);
 
         response.status(result.status_code).json({
@@ -192,7 +194,8 @@ module.exports.login = async (request, response) => {
             token,
             user,
             changePass,
-            menus: MenusPadre
+            menus: MenusPadre,
+            restricciones
         });
         
     } catch (error) {
@@ -606,5 +609,125 @@ module.exports.updateStatusRol = async (request, response) => {
             msg: error.message
         });
     }
+
+};
+
+module.exports.createRestriction = async (request, response) => {
+
+    const id_usuario = request.usuario.ID_USUARIO;
+    const body = request.body;
+    body.id_usuario_ejecuto = id_usuario;
+
+    logger.info(`Entry createRestriction with: ${JSON.stringify({ body })})}`);
+
+    try {
+
+        const result = await operations.createRestriction(body);
+
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+
+        logger.info(`${JSON.stringify(result)}`);
+
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc
+        });
+
+
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    };
+
+
+};
+
+module.exports.deleteRestriction = async (request, response) => {
+
+    const id_usuario = request.usuario.ID_USUARIO;
+    const body = request.body;
+    body.id_usuario_ejecuto = id_usuario;
+
+    logger.info(`Entry deleteRestriction with: ${JSON.stringify({ body })})}`);
+
+    try {
+
+        const result = await operations.deleteRestriction(body);
+
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+
+        logger.info(`${JSON.stringify(result)}`);
+
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc
+        });
+
+
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    };
+
+
+};
+
+module.exports.getUsersRestricted = async (request, response) => {
+
+    const body = request.body;
+    body.codigo = body.codigo != null ? parseInt(body.codigo) : null;
+    body.status = body.status != null ? parseInt(body.status) : null;
+
+    logger.info(`Entry getUsersRestricted with: ${JSON.stringify({ body })})}`);
+    const attString = ['ordercolumn', 'orderdirection', 'identificacion', 'nombre'];
+    const attNumber = ['pagenumber', 'pagesize', 'codigo','status' ];
+
+    const searchFilters = {
+        "ordercolumn": "ID_USUARIO",
+        "orderdirection": "ASC",
+        "pagenumber": null,
+        "pagesize": null,
+        "identificacion": null,
+        "nombre": null,
+        "codigo": null,
+        "status": null
+    };
+   
+
+    try {
+
+        for (let key in body) {
+            const sts = body[key] === null;
+            if (!sts && attString.includes(key) && typeof body[key] != 'string') throw new AppError(`${key} debe ser un string`, 422);
+            if (!sts && attNumber.includes(key) && typeof body[key] != 'number') throw new AppError(`${key} debe ser un numero`, 422);
+            if (!sts) searchFilters[key] = body[key];
+        };
+
+        const result = await operations.getUsersRestricted(searchFilters);
+
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+
+        logger.info(`${JSON.stringify(result)}`);
+
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
+            totalRegistros: result.totalRegistros,
+            users: result.users
+        });
+
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    };
 
 };

@@ -9,7 +9,7 @@ module.exports.uploadTable = (request, response) => {
     const table = request.params.table;
     const user = request.usuario;
 
-    operations.uploadTables(table, parseInt(user.id_usuario)).then((result) => {
+    operations.uploadTables(table, parseInt(user.ID_USUARIO)).then((result) => {
 
 
         const code = parseInt(result.recordsets[0][0].COD);

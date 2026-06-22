@@ -3,7 +3,7 @@ const operations = {};
 
 operations.createQuote = async (user, seller, bd) => {
 
-    const sql = `EXEC PR_CREATE_COTIZACION '${bd.cliente}','${seller}',${user.id_usuario},'@id_cotizacion OUTPUT','@code OUTPUT', '@message OUTPUT';`;
+    const sql = `EXEC PR_CREATE_COTIZACION '${bd.cliente}','${seller}',${user.ID_USUARIO},'@id_cotizacion OUTPUT','@code OUTPUT', '@message OUTPUT';`;
 
     return databaseFuncs.executeQuery(sql, 'createQuote').then(result => {
         return result
@@ -12,7 +12,7 @@ operations.createQuote = async (user, seller, bd) => {
 
 operations.createQuoteDetail = async (user, bd) => {
 
-    const sql = `EXEC PR_CREATE_COTIZACION_DET ${bd.id_cotizacion},${bd.id_detalle},${bd.cantidad},${bd.largoCM},${bd.anchoCM},${bd.altoCM},${bd.peso_kg},${user.id_usuario},'@id_cotdetalle OUTPUT','@code OUTPUT', '@message OUTPUT';`;
+    const sql = `EXEC PR_CREATE_COTIZACION_DET ${bd.id_cotizacion},${bd.id_detalle},${bd.cantidad},${bd.largoCM},${bd.anchoCM},${bd.altoCM},${bd.peso_kg},${user.ID_USUARIO},'@id_cotdetalle OUTPUT','@code OUTPUT', '@message OUTPUT';`;
 
     return databaseFuncs.executeQuery(sql, 'createQuoteDetail').then(result => {
         return result

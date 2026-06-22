@@ -21,10 +21,12 @@ operations.loginR = async (bd) => {
         
         const user = result.recordsets[0][0];
         const menus = result.recordsets[1];
+        const restricciones = result.recordsets[2];
         return {
             pass: result.output.pass,
             user,
             menus,
+            restricciones,
             status_code: result.output.status_code,
             status_desc: result.output.status_desc
         };
@@ -484,6 +486,107 @@ operations.getRoles = async (bd) => {
         };
     };
 };
+
+operations.createRestriction = async (bd) => {
+    try {
+        const result = await databaseFuncs.executeStoredProcedure(
+            'SP_CREAR_RESTRICCION_USUARIO',
+            {
+                ID_USUARIO: { type: sql.Int, value: bd.id_usuario },
+                CODIGO: { type: sql.Int, value: bd.codigo },
+                ID_USUARIO_EJECUTO: { type: sql.Int, value: bd.id_usuario_ejecuto }
+            },
+            {
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
+        );
+
+
+        return {
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC
+        };
+
+    } catch (error) {
+        return {
+            status_code: error.code || 500,
+            status_desc: error.message
+        };
+    };
+};
+
+operations.deleteRestriction = async (bd) => {
+    try {
+        const result = await databaseFuncs.executeStoredProcedure(
+            'SP_DELETE_RESTRICCION_USUARIO',
+            {
+                ID_USUARIO: { type: sql.Int, value: bd.id_usuario },
+                CODIGO: { type: sql.Int, value: bd.codigo },
+                ID_USUARIO_EJECUTO: { type: sql.Int, value: bd.id_usuario_ejecuto }
+            },
+            {
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
+        );
+
+
+        return {
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC
+        };
+
+    } catch (error) {
+        return {
+            status_code: error.code || 500,
+            status_desc: error.message
+        };
+    };
+};
+
+operations.getUsersRestricted = async (bd) => {
+     try {
+
+        const result = await databaseFuncs.executeStoredProcedure(
+            'PR_GET_USUARIOS_RESTRINGIDOS',
+            {
+                ORDERCOLUMN: { type: sql.VarChar, value: bd.ordercolumn },
+                ORDERDIRECTION: { type: sql.VarChar, value: bd.orderdirection },
+                PAGENUMBER: { type: sql.Int, value: bd.pagenumber },
+                PAGESIZE: { type: sql.Int, value: bd.pagesize },
+                IDENTIFICACION: { type: sql.VarChar, value: bd.identificacion },
+                NOMBRE: { type: sql.VarChar, value: bd.nombre },
+                CODIGO: { type: sql.Int, value: bd.codigo },
+                STATUS: { type: sql.Int, value: bd.status }
+
+            },
+            {
+                TOTALREGISTROS: sql.Int,
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
+            },
+            'MOD_SEGURIDAD'
+        );
+
+        const users = result.recordset;
+        return {
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC,
+            totalRegistros: result.output.TOTALREGISTROS,
+            users
+        };
+
+    } catch (error) {
+        return {
+            status_code: error.code,
+            status_desc: error.message,
+        };
+
+    }
+}
 
 
 

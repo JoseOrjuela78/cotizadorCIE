@@ -6,7 +6,7 @@ module.exports.createQuote = (request, response) => {
     const user = request.usuario;
     const bd = request.body;
     bd.cliente = String(bd.cliente).toLocaleUpperCase();
-    const seller = user.nombre + " " + user.apellido;
+    const seller = user.NOMBRE1 + " " + user.APELLIDO1;
 
     logger.info(`${new Date().toString()} Entry createQuote body : ${bd} seller : ${seller}`);
 
@@ -377,9 +377,8 @@ module.exports.getQuoteDetail = (request, response) => {
 };
 
 module.exports.getBrands = (request, response) => {
-    const key = request.params.key;
 
-    logger.info(`${new Date().toString()} Entry getBrands key:${key}`);
+    logger.info(`${new Date().toString()} Entry getBrands`);
 
     operations.getBrands().then((result) => {
 
