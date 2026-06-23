@@ -48,32 +48,13 @@ class Server {
 
         if (!privateKey) {
 
-            // http
-            // const connetion = mssql.connect(this.config, (err, res) => {
-            //   if (err) {
-            //     console.log(err);
-            //   logger.error(`${new Date().toString()} Servidor http ${err}`);
-            // } else {
-            //   console.log('Base de datos SQL On Line');
-
             http.createServer({}, this.app).listen(this.port, () => {
                 console.log('Servidor http corriendo en puerto : ', this.port);
                 logger.info(`${new Date().toString()} Servidor http corriendo en puerto : ${this.port}`);
             });
 
-
-            /*
-            this.app.listen(this.port, () => {
-                logger.info(`${new Date().toString()} Servidor http corriendo en puerto : ${this.port}`);
-            });
-            */
-
-            // }
-            //});
-
         } else {
             // https
-
             https.createServer(https_options, this.app).listen(this.port, () => {
                 logger.info(`${new Date().toString()} Servidor https corriendo en puerto : ${this.port}`);
             });

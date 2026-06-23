@@ -16,10 +16,6 @@ const verificaToken = (request, response, next) => {
         return response.status(422).json({ error: 'Token no proporcionado o inválido' });
     };
 
-
-    //if (!verificaPermits(request)){
-    //  return response.status(422).json({ error: 'privilegios insufientes' });
-    //};
     // Extraemos el token
     const token = authHeader.split(' ')[1];
 
@@ -33,15 +29,10 @@ const verificaToken = (request, response, next) => {
         request.usuario = decoded.usuario;
         
         const status = await verificaPermits(request);
-        if (status) {
-            next();
-        } else {
-            return response.status(422).json({ error: 'ruta no autorizada' });
-        }
+        if (!status) { return response.status(422).json({ error: 'privilegios insufientes' });};
         
-
+        next();
     });
-
 };
 
 const verificaPermits = async(request) => {
@@ -60,24 +51,21 @@ const verificaPermits = async(request) => {
             );
             
             const dbPaths = result.recordsets[0];
+
+            if(dbPaths.length <= 0){return false;};
           
             for (let per of dbPaths) {
                 if (request.method === per.method && utils.pathToRegex(per.path, request.path)) {
                     return true;
                 };
             };
+
             return false;
           
-            //return {
-            //    status_code: result.output.STATUS_CODE,
-            //    status_desc: result.output.STATUS_DESC
-       //};
-            
         } catch (error) {
-            return {
-                status_code: error.code || 500,
-                status_desc: error.message,
-            };
+            
+            return false;
+
         }
 };
 
