@@ -16,8 +16,8 @@ router.put('/api/usuarios/get-pag', [verificaToken], userController.getUsersPag)
 router.post('/api/usuarios/update-pass', [verificaToken], userController.updatePassword);
 
 //LISTAS
-router.get('/api/listas/:idLista', [verificaToken], userController.getLista);
-router.get('/api/cities/:codPais', [verificaToken], userController.getCiudades);
+router.get('/api/listas/:idLista', userController.getLista);
+router.get('/api/cities/:codPais', userController.getCiudades);
 
 //ROLES
 
