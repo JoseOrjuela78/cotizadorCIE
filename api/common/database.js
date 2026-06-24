@@ -3,10 +3,10 @@ const logger = require('./logger');
 const databaseFuncs = {};
 
 const sqlConfig = {
-    user: 'sa',
-    password: '123456',
-    database: 'CotizadorV4',
-    server: '127.0.0.1',
+    user: process.env.USER,
+    password: process.env.PASS,
+    database: process.env.DATABASE,
+    server: process.env.SERVER,
     pool: {
         max: 10,
         min: 0,
