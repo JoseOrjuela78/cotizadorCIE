@@ -118,3 +118,32 @@ module.exports.reportCSV = (request, response) => {
 
     });
 };
+
+module.exports.getBodegas = async (request, response) => {
+
+    const bodega = request.params.bod;
+    logger.info(`Entry getBodegas with: ${JSON.stringify({ bodega })})}`);
+
+    try {
+
+        const result = await operations.getBodegas({ bodega });
+
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+
+        logger.info(`${JSON.stringify(result)}`);
+
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
+            bodegas: result.bodegas
+        });
+
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    };
+
+};
