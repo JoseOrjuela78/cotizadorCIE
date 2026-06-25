@@ -12,7 +12,7 @@ const path = require('path');
 class Server {
 
     constructor() {
-        this.port = 3005; //process.env.PORT;
+        this.port = process.env.PORT || 3000;
         this.app = express();
         //Middlewares
         this.middlewares();
