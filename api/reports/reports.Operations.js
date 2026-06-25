@@ -44,7 +44,7 @@ operations.getBodegas = async (bd) => {
             'EMP001_GREP'
         );
 
-        const bodegas = result.recordset[0];
+        const bodegas = result.recordsets[0];
         return {
             status_code: result.output.STATUS_CODE,
             status_desc: result.output.STATUS_DESC,
