@@ -7,6 +7,7 @@ const sqlConfig = {
     password: process.env.PASS,
     database: process.env.DATABASE,
     server: process.env.SERVER,
+    port: 49698,
     pool: {
         max: 10,
         min: 0,
