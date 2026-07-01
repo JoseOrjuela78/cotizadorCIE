@@ -1,6 +1,7 @@
 
 const logger = require('../common/logger');
 const operations = require('./reports.Operations');
+const AppError = require('../common/appError');
 
 module.exports.reportStock =  (request, response) => {
 

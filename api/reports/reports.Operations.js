@@ -1,6 +1,7 @@
 const databaseFuncs = require('../common/database');
 const operations = {};
 const utils = require('../common/utils');
+const sql = require('mssql');
 
 operations.reportStock = async (body) => {
 
