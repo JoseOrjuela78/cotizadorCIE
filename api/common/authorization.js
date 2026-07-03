@@ -69,7 +69,6 @@ const verificaPermits = async(request) => {
         }
 };
 
-
 module.exports = {
     verificaToken
 };

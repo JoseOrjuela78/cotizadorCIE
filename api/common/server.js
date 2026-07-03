@@ -25,14 +25,20 @@ class Server {
         this.app.use(cors()); //control de acceso paginas
         this.app.use(express.json({ limit: '10mb' })); // parse y lectura de body
         this.app.use(express.static(path.join(__dirname, '../../public'))); // configuracion contenido html carpeta publica
+        this.app.use((req, res, next) => {
+            if (req.originalUrl.startsWith('/api')) {
+                return next(); // deja pasar a los controladores de API
+            }
+            res.sendFile(path.join(__dirname, '../../public', 'index.html'));
+        });
         this.app.use(express.urlencoded({ extended: true }));
     }
 
     routes() {
-        this.app.use(UserRouters);
-        this.app.use(QuoteRouters);
-        this.app.use(TablesRoutes);
-        this.app.use(ReportRouters);
+            this.app.use(UserRouters);
+            this.app.use(QuoteRouters);
+            this.app.use(TablesRoutes);
+            this.app.use(ReportRouters);
     }
 
     listen() {
