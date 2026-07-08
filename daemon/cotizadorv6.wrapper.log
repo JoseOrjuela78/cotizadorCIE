@@ -32,3 +32,35 @@ Stacktrace:   en System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInter
 2026-07-04 09:57:32 - Finished cotizadorv6.exe
 2026-07-04 10:02:46 - Starting C:\nvm4w\nodejs\node.exe  --harmony C:\Users\Administrador\Desktop\cotizador\windowsServices\node_modules\node-windows\lib\wrapper.js --file C:\Users\Administrador\Desktop\cotizador\cotizadorV6\cotizadorCIE\app.js --scriptoptions= --log "CotizadorV6 wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
 2026-07-04 10:02:46 - Started 5648
+2026-07-08 09:01:13 - Stopping cotizadorv6.exe
+2026-07-08 09:01:13 - ProcessKill 5648
+2026-07-08 09:01:14 - Found child process: 2192 Name: conhost.exe
+2026-07-08 09:01:14 - Found child process: 8884 Name: node.exe
+2026-07-08 09:01:14 - Stopping process 2192
+2026-07-08 09:01:14 - Send SIGINT 2192
+2026-07-08 09:01:14 - SIGINT to 2192 failed - Killing as fallback
+2026-07-08 09:01:14 - Stopping process 8884
+2026-07-08 09:01:14 - Send SIGINT 8884
+2026-07-08 09:01:14 - SIGINT to 8884 failed - Killing as fallback
+2026-07-08 09:01:14 - Stopping process 5648
+2026-07-08 09:01:14 - Send SIGINT 5648
+2026-07-08 09:01:14 - SIGINT to 5648 failed - Killing as fallback
+2026-07-08 09:01:14 - Finished cotizadorv6.exe
+2026-07-08 09:02:13 - Starting C:\nvm4w\nodejs\node.exe  --harmony C:\Users\Administrador\Desktop\cotizador\windowsServices\node_modules\node-windows\lib\wrapper.js --file C:\Users\Administrador\Desktop\cotizador\cotizadorV6\cotizadorCIE\app.js --scriptoptions= --log "CotizadorV6 wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-07-08 09:02:13 - Started 14084
+2026-07-08 10:30:00 - Stopping cotizadorv6.exe
+2026-07-08 10:30:00 - ProcessKill 14084
+2026-07-08 10:30:00 - Found child process: 12676 Name: conhost.exe
+2026-07-08 10:30:00 - Found child process: 9484 Name: node.exe
+2026-07-08 10:30:00 - Stopping process 12676
+2026-07-08 10:30:00 - Send SIGINT 12676
+2026-07-08 10:30:00 - SIGINT to 12676 failed - Killing as fallback
+2026-07-08 10:30:00 - Stopping process 9484
+2026-07-08 10:30:00 - Send SIGINT 9484
+2026-07-08 10:30:00 - SIGINT to 9484 failed - Killing as fallback
+2026-07-08 10:30:00 - Stopping process 14084
+2026-07-08 10:30:00 - Send SIGINT 14084
+2026-07-08 10:30:00 - SIGINT to 14084 failed - Killing as fallback
+2026-07-08 10:30:00 - Finished cotizadorv6.exe
+2026-07-08 10:32:09 - Starting C:\nvm4w\nodejs\node.exe  --harmony C:\Users\Administrador\Desktop\cotizador\windowsServices\node_modules\node-windows\lib\wrapper.js --file C:\Users\Administrador\Desktop\cotizador\cotizadorV6\cotizadorCIE\app.js --scriptoptions= --log "CotizadorV6 wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-07-08 10:32:09 - Started 12024

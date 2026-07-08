@@ -109,13 +109,16 @@ module.exports.reportCSV = (request, response) => {
     operations.createCsv(body).then((result) => {
     
         const code = result.code;
-        const message = `reporte csv generado`;
-        const datos = result.csv;
-        
-        response.status(code).json({
-            message,
-            datos
-        });
+        const csv = result.csv; 
+        const fecha = new Date();
+        const codigo = fecha.toISOString().replace(/[-:.TZ]/g, '');
+        const filename = `${codigo}.csv`;
+
+        // Configurar headers para descarga
+        response.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        response.setHeader('Content-Type', 'text/csv');
+             
+        response.status(code).send(csv);
 
     });
 };
