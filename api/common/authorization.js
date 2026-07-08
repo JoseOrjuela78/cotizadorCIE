@@ -19,7 +19,7 @@ const verificaToken = (request, response, next) => {
     // Extraemos el token
     const token = authHeader.split(' ')[1];
 
-    jwt.verify(token,process.env.JWT_KEY, async (err, decoded) => {
+    jwt.verify(token,'C13C0L0M814_C07', async (err, decoded) => {
         if (err) {
             return response.status(401).json({
                 ok: false,

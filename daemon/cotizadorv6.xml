@@ -1,0 +1,32 @@
+<service>
+	<id>cotizadorv6.exe</id>
+	<name>CotizadorV6</name>
+	<description>Cotizador de Node.js en Windows</description>
+	<executable>C:\nvm4w\nodejs\node.exe</executable>
+	<argument>--harmony</argument>
+	<argument>C:\Users\Administrador\Desktop\cotizador\windowsServices\node_modules\node-windows\lib\wrapper.js</argument>
+	<argument>--file</argument>
+	<argument>C:\Users\Administrador\Desktop\cotizador\cotizadorV6\cotizadorCIE\app.js</argument>
+	<argument>--scriptoptions=</argument>
+	<argument>--log</argument>
+	<argument>CotizadorV6 wrapper</argument>
+	<argument>--grow</argument>
+	<argument>0.25</argument>
+	<argument>--wait</argument>
+	<argument>1</argument>
+	<argument>--maxrestarts</argument>
+	<argument>3</argument>
+	<argument>--abortonerror</argument>
+	<argument>n</argument>
+	<argument>--stopparentfirst</argument>
+	<argument>undefined</argument>
+	<logmode>rotate</logmode>
+	<stoptimeout>30sec</stoptimeout>
+	<env name="undefined" value="undefined"/>
+	<serviceaccount>
+		<domain>SERVER</domain>
+		<user>LocalSystem</user>
+		<password></password>
+	</serviceaccount>
+	<workingdirectory>C:\Users\Administrador\Desktop\cotizador\windowsServices</workingdirectory>
+</service>

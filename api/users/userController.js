@@ -127,7 +127,7 @@ module.exports.login = async (request, response) => {
 
         if (!bcrypt.compareSync(bd.pass, pass)) throw new AppError('Credenciales incorrectas',403);
 
-        const token = jwt.sign({ usuario: result.user }, process.env.JWT_KEY, { expiresIn: '8h' });
+        const token = jwt.sign({ usuario: result.user }, 'C13C0L0M814_C07', { expiresIn: '8h' });
 
         const menus = result.menus;
 

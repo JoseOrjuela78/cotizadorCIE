@@ -3,11 +3,11 @@ const logger = require('./logger');
 const databaseFuncs = {};
 
 const sqlConfig = {
-    user: process.env.USER,
-    password: process.env.PASS,
-    database: process.env.DATABASE,
-    server: process.env.SERVER,
-    //port: 49698,
+    user: 'sa',
+    password: 'Factory123',
+    database: 'CotizadorV4',
+    port: 49698,
+    server: '192.168.100.100',
     pool: {
         max: 10,
         min: 0,
@@ -18,7 +18,7 @@ const sqlConfig = {
         trustServerCertificate: false, // change to true for local dev / self-signed certs
         enableArithAbort: false
     }
-}
+};
 
 
 databaseFuncs.executeQuery = async(sqlquery, func, database = 'CotizadorV4') => {
