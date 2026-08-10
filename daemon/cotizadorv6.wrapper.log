@@ -64,3 +64,51 @@ Stacktrace:   en System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInter
 2026-07-08 10:30:00 - Finished cotizadorv6.exe
 2026-07-08 10:32:09 - Starting C:\nvm4w\nodejs\node.exe  --harmony C:\Users\Administrador\Desktop\cotizador\windowsServices\node_modules\node-windows\lib\wrapper.js --file C:\Users\Administrador\Desktop\cotizador\cotizadorV6\cotizadorCIE\app.js --scriptoptions= --log "CotizadorV6 wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
 2026-07-08 10:32:09 - Started 12024
+2026-07-14 14:32:13 - Stopping cotizadorv6.exe
+2026-07-14 14:32:13 - ProcessKill 12024
+2026-07-14 14:32:13 - Found child process: 9516 Name: conhost.exe
+2026-07-14 14:32:13 - Found child process: 16596 Name: node.exe
+2026-07-14 14:32:13 - Stopping process 9516
+2026-07-14 14:32:13 - Send SIGINT 9516
+2026-07-14 14:32:13 - SIGINT to 9516 failed - Killing as fallback
+2026-07-14 14:32:13 - Stopping process 16596
+2026-07-14 14:32:13 - Send SIGINT 16596
+2026-07-14 14:32:13 - SIGINT to 16596 failed - Killing as fallback
+2026-07-14 14:32:13 - Stopping process 12024
+2026-07-14 14:32:13 - Send SIGINT 12024
+2026-07-14 14:32:13 - SIGINT to 12024 failed - Killing as fallback
+2026-07-14 14:32:13 - Finished cotizadorv6.exe
+2026-07-14 14:34:10 - Starting C:\nvm4w\nodejs\node.exe  --harmony C:\Users\Administrador\Desktop\cotizador\windowsServices\node_modules\node-windows\lib\wrapper.js --file C:\Users\Administrador\Desktop\cotizador\cotizadorV6\cotizadorCIE\app.js --scriptoptions= --log "CotizadorV6 wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-07-14 14:34:10 - Started 11056
+2026-07-14 15:38:51 - Stopping cotizadorv6.exe
+2026-07-14 15:38:51 - ProcessKill 11056
+2026-07-14 15:38:52 - Found child process: 15976 Name: conhost.exe
+2026-07-14 15:38:52 - Found child process: 16316 Name: node.exe
+2026-07-14 15:38:52 - Stopping process 15976
+2026-07-14 15:38:52 - Send SIGINT 15976
+2026-07-14 15:38:52 - SIGINT to 15976 failed - Killing as fallback
+2026-07-14 15:38:52 - Stopping process 16316
+2026-07-14 15:38:52 - Send SIGINT 16316
+2026-07-14 15:38:52 - SIGINT to 16316 failed - Killing as fallback
+2026-07-14 15:38:52 - Stopping process 11056
+2026-07-14 15:38:52 - Send SIGINT 11056
+2026-07-14 15:38:52 - SIGINT to 11056 failed - Killing as fallback
+2026-07-14 15:38:52 - Finished cotizadorv6.exe
+2026-07-14 15:41:00 - Starting C:\nvm4w\nodejs\node.exe  --harmony C:\Users\Administrador\Desktop\cotizador\windowsServices\node_modules\node-windows\lib\wrapper.js --file C:\Users\Administrador\Desktop\cotizador\cotizadorV6\cotizadorCIE\app.js --scriptoptions= --log "CotizadorV6 wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-07-14 15:41:00 - Started 8960
+2026-07-16 18:10:02 - Stopping cotizadorv6.exe
+2026-07-16 18:10:02 - ProcessKill 8960
+2026-07-16 18:10:02 - Shutdown exception
+Message:Se está cerrando el sistema.
+
+Stacktrace:   en System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   en System.Management.ManagementScope.InitializeGuts(Object o)
+   en System.Management.ManagementScope.Initialize()
+   en System.Management.ManagementObjectSearcher.Initialize()
+   en System.Management.ManagementObjectSearcher.Get()
+   en winsw.WrapperService.GetChildPids(Int32 pid)
+   en winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   en winsw.WrapperService.StopIt()
+   en winsw.WrapperService.OnShutdown()
+2026-07-16 18:12:51 - Starting C:\nvm4w\nodejs\node.exe  --harmony C:\Users\Administrador\Desktop\cotizador\windowsServices\node_modules\node-windows\lib\wrapper.js --file C:\Users\Administrador\Desktop\cotizador\cotizadorV6\cotizadorCIE\app.js --scriptoptions= --log "CotizadorV6 wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-07-16 18:12:51 - Started 6352
