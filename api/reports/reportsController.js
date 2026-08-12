@@ -57,16 +57,16 @@ module.exports.reportStockCIE = (request, response) => {
     const body = request.body;
 
     const searchFilters = {
-        "ordenarPor": `'${"Annio"}'`,
+        "ordenarPor": `'${"Marca"}'`,
         "dirOrden": `'${"ASC"}'`,
         "pageNumer": 1,
         "pageSize": null,
         "almacen": null,
         "descripcion": null,
-        "annioI": null,
-        "annioF": null,
-        "mesI": null,
-        "mesF": null,
+        "fechaEF": null,
+        "fechaEI": null,
+        "fechaSF": null,
+        "fechaSI": null,
         "marca": null,
         "referencia": null,
         "operacion": 3
