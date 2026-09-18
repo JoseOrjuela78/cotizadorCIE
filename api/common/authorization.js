@@ -53,6 +53,10 @@ const verificaPermits = async(request) => {
             const dbPaths = result.recordsets[0];
 
             if(dbPaths.length <= 0){return false;};
+
+            if(request.method === 'POST' && request.path === '/api/usuarios/update-pass' ){
+                return true;
+            };
           
             for (let per of dbPaths) {
                 if (request.method === per.method && utils.pathToRegex(per.path, request.path)) {
