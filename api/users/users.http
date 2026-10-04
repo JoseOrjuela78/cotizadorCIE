@@ -1,0 +1,9 @@
+### reportPrecios
+POST http://localhost:3005/api/usuarios/login HTTP/1.1
+content-type: application/json
+
+{
+        "email": "alfredito978@live.com",
+        "pass": "2018Ana*"
+        
+}

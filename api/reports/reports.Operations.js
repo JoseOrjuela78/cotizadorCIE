@@ -61,4 +61,50 @@ operations.getBodegas = async (bd) => {
     }
 }
 
+operations.reportPrecios = async (body) => {
+
+    const sql = `EXECUTE sp_Obtener_precios ${body.pageNumer},${body.pageSize},${body.idMarca},${body.referencia},${body.descripcion},${body.operacion}`;
+    return databaseFuncs.executeQuery(sql, 'reportPrecios', 'EMP001_GREP').then(result => {
+        return result
+    });
+};
+
+operations.reportFacturacion = async (body) => {
+
+    const sql = `EXECUTE sp_Obtener_facturacion ${body.pageNumer},${body.pageSize},${body.nit},${body.cliente},${body.nro_Factura},${body.referencia},${body.descripcion},${body.fecha_inicial},${body.fecha_final},${body.id_usuario},${body.operacion}`;
+    console.log({ sql })
+    return databaseFuncs.executeQuery(sql, 'reportFacturacion', 'EMP001_GREP').then(result => {
+        return result
+    });
+};
+
+operations.getMarcas = async () => {
+    try {
+
+        const result = await databaseFuncs.executeStoredProcedure(
+            'PR_GET_MARCAS_REP_PRICES',
+            {},
+            {
+                STATUS_CODE: sql.Int,
+                STATUS_DESC: sql.VarChar(500)
+            },
+            'EMP001_GREP'
+        );
+
+        const marcas = result.recordsets[0];
+        return {
+            status_code: result.output.STATUS_CODE,
+            status_desc: result.output.STATUS_DESC,
+            marcas
+        };
+
+    } catch (error) {
+        return {
+            status_code: error.code,
+            status_desc: error.message,
+        };
+
+    }
+}
+
 module.exports = operations;

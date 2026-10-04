@@ -1,0 +1,38 @@
+### reportPrecios
+PUT http://localhost:3005/api/reports/precios HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjp7IkZFQ0hBX0NSRUFDSU9OIjoiMjAyNi0wNi0wOVQwMDowMDowMC4wMDBaIiwiRkVDSEFfQUNUVUFMSVpBQ0lPTiI6IjIwMjYvMDkvMTciLCJJRF9VU1VBUklPIjoxLCJJRF9VU1VBUklPX0VKRUNVVE8iOjEsIlRJUE9fSURFTlRJRklDQUNJT04iOiJDRSIsIklERU5USUZJQ0FDSU9OIjoiMTIzNDU2NzgiLCJOT01CUkUxIjoiSk9TRVAiLCJBUEVMTElETzEiOiJPUkpVRUxBIiwiSURfUk9MIjoxLCJFU1RBRE8iOnRydWV9LCJpYXQiOjE3OTA5NjEwNTUsImV4cCI6MTc5MDk4OTg1NX0.vqxIwCUOhtHyyfyfZBm9m1FP6VeB8vZaQ6CDKFVRMtU
+
+{
+        "pageNumer": 1,
+        "pageSize": 5,
+        "idMarca": null,
+        "referencia": "VF3Kv0W",
+        "descripcion": null,
+        "operacion": 1
+}
+
+### reportFacturacion
+PUT http://localhost:3005/api/reports/facturacion HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjp7IkZFQ0hBX0NSRUFDSU9OIjoiMjAyNi0wNi0wOVQwMDowMDowMC4wMDBaIiwiRkVDSEFfQUNUVUFMSVpBQ0lPTiI6IjIwMjYvMDkvMTciLCJJRF9VU1VBUklPIjoxLCJJRF9VU1VBUklPX0VKRUNVVE8iOjEsIlRJUE9fSURFTlRJRklDQUNJT04iOiJDRSIsIklERU5USUZJQ0FDSU9OIjoiMTIzNDU2NzgiLCJOT01CUkUxIjoiSk9TRVAiLCJBUEVMTElETzEiOiJPUkpVRUxBIiwiSURfUk9MIjoxLCJFU1RBRE8iOnRydWV9LCJpYXQiOjE3OTA5NjEwNTUsImV4cCI6MTc5MDk4OTg1NX0.vqxIwCUOhtHyyfyfZBm9m1FP6VeB8vZaQ6CDKFVRMtU
+
+
+{
+  "pageNumer": 1,
+  "pageSize": 5,
+  "nit": null,
+  "cliente": null,
+  "nro_Factura": null,
+  "referencia": null,
+  "descripcion": null,
+  "fecha_inicial": null,
+  "fecha_final": null,
+  "id_usuario": 1,
+  "operacion": 1
+}
+
+### get-marcas
+GET http://localhost:3005/api/reports/get-marcas HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjp7IkZFQ0hBX0NSRUFDSU9OIjoiMjAyNi0wNi0wOVQwMDowMDowMC4wMDBaIiwiRkVDSEFfQUNUVUFMSVpBQ0lPTiI6IjIwMjYvMDkvMTciLCJJRF9VU1VBUklPIjoxLCJJRF9VU1VBUklPX0VKRUNVVE8iOjEsIlRJUE9fSURFTlRJRklDQUNJT04iOiJDRSIsIklERU5USUZJQ0FDSU9OIjoiMTIzNDU2NzgiLCJOT01CUkUxIjoiSk9TRVAiLCJBUEVMTElETzEiOiJPUkpVRUxBIiwiSURfUk9MIjoxLCJFU1RBRE8iOnRydWV9LCJpYXQiOjE3OTA5NjEwNTUsImV4cCI6MTc5MDk4OTg1NX0.vqxIwCUOhtHyyfyfZBm9m1FP6VeB8vZaQ6CDKFVRMtU

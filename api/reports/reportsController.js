@@ -151,3 +151,124 @@ module.exports.getBodegas = async (request, response) => {
     };
 
 };
+
+module.exports.reportPrecios = (request, response) => {
+
+    const body = request.body;
+
+    const searchFilters = {
+        "pageNumer": 1,
+        "pageSize": 5,
+        "idMarca": null,
+        "referencia": null,
+        "descripcion": null,
+        "operacion": 1
+    };
+
+    for (const key in searchFilters) {
+        if (body[key]) {
+            if (typeof body[key] === 'string') searchFilters[key] = `'${body[key]}'`;
+            if (typeof body[key] === 'number') searchFilters[key] = body[key];
+        };
+    };
+
+    logger.info(`${new Date().toString()}${request.method}-${request.path}-${JSON.stringify(searchFilters)}`);
+
+    operations.reportPrecios(searchFilters).then((result) => {
+
+        const code = 200;
+        const message = `reporte de precios obtenido exitosamente`;
+        const TotalRegistros = result.recordset[0].TotalRegistros;
+        const datos = result.recordsets[1];
+
+        logger.info(`${new Date().toString()} reportPrecios - ${message}`);
+
+        response.status(code).json({
+            message,
+            TotalRegistros,
+            datos
+        });
+
+
+    })
+
+};
+
+module.exports.reportFacturacion = (request, response) => {
+
+    const body = request.body;
+    const user = request.usuario.ID_USUARIO;
+
+    const searchFilters = {
+        "pageNumer": null,
+        "pageSize": null,
+        "nit": null,
+        "cliente": null,
+        "nro_Factura": null,
+        "referencia": null,
+        "descripcion": null,
+        "fecha_inicial": null,
+        "fecha_final": null,
+        "id_usuario": null,
+        "operacion": 1
+
+    };
+
+    for (const key in searchFilters) {
+        if (body[key]) {
+            if (typeof body[key] === 'string') searchFilters[key] = `'${body[key]}'`;
+            if (typeof body[key] === 'number') searchFilters[key] = body[key];
+        };
+    };
+
+    searchFilters.id_usuario = user;
+
+    logger.info(`${new Date().toString()}${request.method}-${request.path}-${JSON.stringify(searchFilters)}`);
+
+    operations.reportFacturacion(searchFilters).then((result) => {
+        const code = 200;
+        const message = `reporte facturacion obtenido exitosamente`;
+        const TotalRegistros = result.recordset[0].TotalRegistros;
+        const datos = result.recordsets[1];
+
+        logger.info(`${new Date().toString()} reportFacturacion - ${message}`);
+
+        response.status(code).json({
+            message,
+            TotalRegistros,
+            datos
+        });
+
+
+    })
+
+};
+
+module.exports.getMarcas = async (request, response) => {
+
+    
+    logger.info(`Entry getMarcas`);
+
+    try {
+
+        const result = await operations.getMarcas();
+
+        if (result.status_code != 200) throw new AppError(result.status_desc, result.status_code);
+
+        logger.info(`${JSON.stringify(result)}`);
+
+        response.status(result.status_code).json({
+            ok: true,
+            msg: result.status_desc,
+            marcas: result.marcas
+        });
+
+    } catch (error) {
+        logger.error(`${error}`);
+        response.status(error.statusCode).json({
+            ok: false,
+            msg: error.message
+        });
+    };
+
+};
