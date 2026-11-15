@@ -5,8 +5,26 @@ const sql = require('mssql');
 
 operations.reportStock = async (body) => {
 
-    const sql = `EXECUTE sp_Obtener_Reporte_Medellin ${body.ordenarPor},${body.dirOrden},${body.pageNumer},${body.pageSize},${body.marca},${body.referencia},${body.descripcion},${null},${null},${body.almacen},${body.fechaEI},${body.fechaEF},${body.fechaSI},${body.fechaSF},${body.operacion}`;
-    console.log(sql);
+    const sql = `EXECUTE sp_Obtener_Reporte_Medellin 
+                        ${body.ordenarPor},
+                        ${body.dirOrden},
+                        ${body.pageNumer},
+                        ${body.pageSize},
+                        ${body.marca},
+                        ${body.referencia},
+                        ${body.descripcion},
+                        ${body.cantidadDisponible},
+                        ${body.cantidadVendida},
+                        ${body.almacen},
+                        ${body.fechaEI},
+                        ${body.fechaEF},
+                        ${body.fechaSI},
+                        ${body.fechaSF},
+                        ${body.fecha_inicial_fact},
+                        ${body.fecha_final_fact},
+                        'M1,M2',
+                        ${body.operacion}`;
+                        console.log(sql);
     return databaseFuncs.executeQuery(sql, 'reportStock', 'EMP001_GREP').then(result => {
         return result
     });
@@ -14,8 +32,26 @@ operations.reportStock = async (body) => {
 
 operations.reportStockCIE = async (body) => {
 
-    const sql = `EXECUTE sp_Obtener_Reporte_Stock ${body.ordenarPor},${body.dirOrden},${body.pageNumer},${body.pageSize},${body.marca},${body.referencia},${body.descripcion},${null},${null},${body.almacen},${body.fechaEI},${body.fechaEF},${body.fechaSI},${body.fechaSF},${body.operacion}`;
-    console.log(sql);
+    const sql = `EXECUTE sp_Obtener_Reporte_Stock 
+                 ${body.ordenarPor},
+                 ${body.dirOrden},
+                 ${body.pageNumer},
+                 ${body.pageSize},
+                 ${body.marca},
+                 ${body.referencia},
+                 ${body.descripcion},
+                 ${null},
+                 ${null},
+                 ${body.almacen},
+                 ${body.fechaEI},
+                 ${body.fechaEF},
+                 ${body.fechaSI},
+                 ${body.fechaSF},
+                 ${body.fecha_inicial_fact},
+                 ${body.fecha_final_fact},
+                 ${body.bodegas},
+                 ${body.operacion}`;
+                 console.log(sql);
     return databaseFuncs.executeQuery(sql, 'reportStock', 'EMP001_GREP').then(result => {
         return result
     });

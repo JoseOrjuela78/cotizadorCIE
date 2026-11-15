@@ -8,19 +8,24 @@ module.exports.reportStock =  (request, response) => {
     const body = request.body;
 
     const searchFilters = {
-        "ordenarPor"    : `'${"Marca"}'`,
-        "dirOrden"      : `'${"ASC"}'`,
-        "pageNumer"     : 1,
-        "pageSize"      : null,
-        "almacen"       : null,
-        "descripcion"   : null,
-        "fechaEF"       : null,
-        "fechaEI"       : null,
-        "fechaSF"       : null,
-        "fechaSI"       : null,
-        "marca"         : null,
-        "referencia"    : null,
-        "operacion"     : 3
+        "ordenarPor"            : `'${"Marca"}'`,
+        "dirOrden"              : `'${"ASC"}'`,
+        "pageNumer"             : 1,
+        "pageSize"              : null,
+        "marca"                 : null,
+        "referencia"            : null,
+        "descripcion"           : null,
+        "cantidadDisponible"    : null,
+        "cantidadVendida"       : null,
+        "almacen"               : null,
+        "fechaEF"               : null,
+        "fechaEI"               : null,
+        "fechaSF"               : null,
+        "fechaSI"               : null,
+        "fecha_inicial_fact"    : null,
+        "fecha_final_fact"      : null,
+        "bodegas"               : null,
+        "operacion"             : 3
     };
 
     for (const key in searchFilters) {
@@ -69,6 +74,9 @@ module.exports.reportStockCIE = (request, response) => {
         "fechaSI": null,
         "marca": null,
         "referencia": null,
+        "fecha_inicial_fact": null,
+        "fecha_final_fact": null,
+        "bodegas": null,
         "operacion": 3
     };
 
@@ -158,7 +166,7 @@ module.exports.reportPrecios = (request, response) => {
 
     const searchFilters = {
         "pageNumer": 1,
-        "pageSize": 5,
+        "pageSize": null,
         "idMarca": null,
         "referencia": null,
         "descripcion": null,
