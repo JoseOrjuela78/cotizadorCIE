@@ -219,7 +219,6 @@ module.exports.reportFacturacion = (request, response) => {
         "fecha_final": null,
         "id_usuario": null,
         "operacion": 1
-
     };
 
     for (const key in searchFilters) {
@@ -237,7 +236,7 @@ module.exports.reportFacturacion = (request, response) => {
         const code = 200;
         const message = `reporte facturacion obtenido exitosamente`;
         const TotalRegistros = result.recordset[0].TotalRegistros;
-        const datos = result.recordsets[1];
+        const datos = result.recordsets;
 
         logger.info(`${new Date().toString()} reportFacturacion - ${message}`);
 
